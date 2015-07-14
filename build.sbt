@@ -1,4 +1,4 @@
-name := """go-be"""
+name := "go-be"
 
 version := "1.0-SNAPSHOT"
 
