@@ -1,0 +1,38 @@
+@(creatorForm : Form[models.Sponsor])(implicit toolbar : models.Secure.Toolbar)
+@import helper._
+
+@main("Sponsor Form"){
+<main id="sponsor-form">
+<h1>Sponsor Form</h1>
+@nav()
+
+<br/>
+
+<div class="content-block">
+<div id="sponsor-helper-form" class="helper-form">
+@helper.form(action = routes.Creator.addSponsor) {
+  @inputText(creatorForm("_id"),
+  			 '_label -> null,
+    		 'style -> "display: none")
+  @inputText(creatorForm("sponsorName"),
+    		 '_label -> "Name",
+    		 '_showConstraints -> false,
+    		 'size -> 30,
+    		 'placeholder -> "First Last")
+  @inputText(creatorForm("location.latitude"), 
+  						'_showConstraints -> false,
+  						'size -> 30)
+  @inputText(creatorForm("location.longitude"), 
+  						'_showConstraints -> false,
+  						'size -> 30)
+  @checkbox(creatorForm("hasFirstDrop"), '_showConstraints -> false)
+  @checkbox(creatorForm("isAuthorized"), '_showConstraints -> false)
+  @textarea(creatorForm("workingAddress"), args = 'rows -> 3, 'cols -> 40, '_showConstraints -> false)
+  @inputText(creatorForm("pointOfContact"), '_showConstraints -> false)
+  @inputText(creatorForm("phoneNumber"), '_showConstraints -> false)
+  @inputText(creatorForm("userLoginId"), '_label -> "Associated User", '_showConstraints -> false, '_value -> "myValue")
+ <input type="submit" value="Submit"/>
+}
+</div></div>
+</main>
+}

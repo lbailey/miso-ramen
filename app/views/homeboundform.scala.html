@@ -1,0 +1,49 @@
+@(creatorForm : Form[models.Homebound])(implicit toolbar : models.Secure.Toolbar)
+@import helper._
+
+@main("Homebound Form"){
+<main id="homebound-form">
+<h1>Homebound Form</h1>
+@nav()
+
+<div class="content-block">
+<div id="homebound-helper-form" class="helper-form">
+@helper.form(action = routes.Creator.addHomebound()) {
+  @inputText(creatorForm("_id"),
+  			 '_label -> null,
+    		 'style -> "display: none")
+  @inputText(creatorForm("homeboundName"),
+    		 '_label -> "Name",
+    		 '_showConstraints -> false,
+    		 'size -> 30,
+    		 'placeholder -> "First Last")
+  @inputText(creatorForm("location.latitude"), 
+  						'_showConstraints -> false,
+  						'size -> 30)
+  @inputText(creatorForm("location.longitude"), 
+  						'_showConstraints -> false,
+  						'size -> 30)
+  @checkbox(creatorForm("isMoved"), '_showConstraints -> false)
+  @checkbox(creatorForm("hasSponsor"), '_showConstraints -> false)
+  @checkbox(creatorForm("alreadyInHome"), '_showConstraints -> false)
+  @inputText(creatorForm("urlProfilePic"), '_showConstraints -> false, 'size -> 30)
+  @inputText(creatorForm("homeAddress"), '_showConstraints -> false, 'size -> 30)
+  @textarea(creatorForm("bio"), args = 'rows -> 3, 'cols -> 40, '_showConstraints -> false) 
+  @inputText(creatorForm("age"), '_showConstraints -> false)
+  @checkbox(creatorForm("hasPets"), '_showConstraints -> false) 
+  @checkbox(creatorForm("hasKids"), '_showConstraints -> false)
+  @checkbox(creatorForm("hasBox"), '_showConstraints -> false) 
+  @inputText(creatorForm("currentSponsorId"), '_showConstraints -> false)
+  
+ <input type="submit" value="Submit"/>
+}
+</div></div>
+
+</main>
+}
+
+
+/*
+
+@if(creatorForm("isMoved").value.getOrElse("false") == "true"){checked="checked"}
+*/

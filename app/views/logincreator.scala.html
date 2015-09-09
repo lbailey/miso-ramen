@@ -1,0 +1,33 @@
+@(loginForm : Form[models.Secure.Login])(implicit toolbar : models.Secure.Toolbar)
+@import helper._
+
+<html>
+    <head>
+        <title>Manage Logins</title>
+    </head>
+    <body>
+    <h1>Add a User</h1>
+	@form(action = routes.ManageUsers.addUser) {
+	
+ 	<p>
+    	<input type="username" name="username" placeholder="username" id="username">
+    </p><p>
+    	<input type="password" name="password" id="password" placeholder="password">
+    </p><p>
+        <input type="submit" id="loginbutton">
+    </p>
+	}
+	<h1>Remove User</h1>
+	@form(action = routes.ManageUsers.removeUser) {
+	
+ 	<p>
+    	<input type="username" name="username" placeholder="username" id="username">
+    </p><p>
+    	<input type="hidden" name="password" id="password" placeholder="password" value="">
+    </p><p>
+        <input type="submit" id="loginbutton">
+    </p>
+	}
+    </body>
+</html>
+    

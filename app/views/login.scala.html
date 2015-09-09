@@ -1,0 +1,20 @@
+@(loginForm : Form[models.Secure.Login])(implicit toolbar : models.Secure.Toolbar)
+@import helper._
+
+@main("Login"){
+    <main id="login">
+      <h1>AdCMS - LogIn</h1>
+      
+  	@form(action = routes.Authentication.authenticate) {	
+  
+      	<input type="username" name="username" placeholder="username" id="username" required />
+  
+      	<input type="password" name="password" placeholder="password" id="password" required />
+  
+        <input type="submit" id="loginbutton">
+  
+  	}
+  	<p>hint: admin/admin</p>
+  	</main>
+}
+    

@@ -1,0 +1,22 @@
+@()(implicit toolbar : models.Secure.Toolbar)
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+</head>
+
+
+<div id="login-wrapper">
+@toolbar.user.map { user =>
+  @if(toolbar.authorized) {
+  <p class="login">Logged in as:<b> @user </b>&nbsp;
+  	<a class="logout" href="@routes.Authentication.logout" target="_top">logout</a>
+  </p>
+  }
+  @if(!toolbar.authorized) {
+  <p class="login">
+  	<a href="@routes.Authentication.login" target="_top">login</a>
+  </p>
+  }
+}
+</div>

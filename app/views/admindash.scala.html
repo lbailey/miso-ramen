@@ -1,0 +1,69 @@
+@(homebounds: List[models.Homebound], sponsors: List[models.Sponsor])
+
+@main("Admin Dashboard"){
+<main id="dashboard">
+<h1>GoBE - Dashboard</h1>
+@nav()
+<table class="dashboard-table">
+  <tr>
+    <td>Sponsor Name</td>
+    <td>GPS</td>
+    <td>Has First Drop?</td>
+    <td>Is Authorized?</td>
+    <td>Working Address</td>
+    <td>Point of Contact</td>
+    <td>Phone Number</td>
+    <td>User Login ID</td>
+    <td>Completed Moves</td>
+  </tr>
+	@sponsors.map { sp =>
+  <tr>
+	<td>@sp.sponsorName</td>
+	<td>@sp.gpsLocation</td>
+	<td>@sp.hasFirstDrop</td>
+	<td>@sp.isAuthorized</td>
+	<td>@sp.workingAddress</td>
+	<td>@sp.pointOfContact</td>
+	<td>@sp.phoneNumber</td>
+	<td>@sp.userLoginId</td>
+	<td>@sp.completedMoves</td>
+	</tr>
+	}
+</table>
+
+<table class="dashboard-table">
+  <tr>
+    <td>Homebound Name</td>
+    <td>GPS</td>
+    <td>Already Moved?</td>
+    <td>Has Sponsor?</td>
+    <td>Already In Home?</td>
+    <td>Profile Pic URL</td>
+    <td>Home Address</td>
+    <td>Bio</td>
+    <td>Age</td>
+    <td>Has Pets?</td>
+    <td>Has Kids?</td>
+    <td>Has Box?</td>
+    <td>Sponsor User ID</td>
+  </tr>
+	@homebounds.map { hb =>
+  <tr>
+	<td>@hb.homeboundName</td>
+	<td>@hb.gpsLocation</td>
+	<td>@hb.isMoved</td>
+	<td>@hb.hasSponsor</td>
+	<td>@hb.alreadyInHome</td>
+	<td>@hb.urlProfilePic</td>
+	<td>@hb.homeAddress</td>
+	<td>@hb.bio</td>
+	<td>@hb.age</td>
+	<td>@hb.hasPets</td>
+	<td>@hb.hasKids</td>
+	<td>@hb.hasBox</td>
+	<td>@hb.currentSponsorId</td>
+	</tr>
+	}
+</table>
+</main>
+}

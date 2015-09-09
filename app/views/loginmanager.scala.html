@@ -1,0 +1,17 @@
+@(logins: List[models.User])(implicit toolbar : models.Secure.Toolbar)
+@import helper._
+
+<html>
+    <head>
+        <title>Manage Logins</title>
+    </head>
+    <body>
+	
+	@logins.map { user =>
+		@user.u</br>
+		@user._id</br>
+		@user.p</br>
+	}
+    </body>
+</html>
+    

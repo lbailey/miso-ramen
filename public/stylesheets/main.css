@@ -1,0 +1,241 @@
+  body {
+    margin: 0;
+  }
+  
+  main {
+  	position: absolute;
+  	top: 0px;
+  	left: 0px;
+  	right: 0px;
+  	margin: 0 0 0 0;
+  }
+  
+  #bar {
+    float: left;
+    width: 75%;
+//    background: url(../../images/gobeBg3-lighter.jpg) no-repeat 0% 30%;
+//    background-clip: border-box;
+//    background-size: 100% auto;
+    height: 100%;
+  }
+  
+  #sticky-bar {
+    width: 100%;
+    height: 60px;
+    background-color: #333;
+    color: #fff;
+    margin-top: -60px;
+    visibility: hidden;
+    font-size: 2em;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  
+  #sticky-bar.stick {
+    position: fixed;
+    top: 0;
+    z-index: 10000;
+    visibility: visible;
+  }
+  
+  header {
+  	width: 100%;
+  	min-height: 150px;
+  	height: 600px;
+//  	background-color: #2c2c2c;
+  	margin: 0 0;
+  	top: 0px;
+    background: url("http://i.imgur.com/FPpSpcp.jpg") no-repeat 0% 60%;
+    background-clip: border-box;
+    background-size: 100% auto;
+    background-attachment: fixed;
+  }
+  
+  #user-toolbar {
+  	border: 0px;
+  	//background-color: #2c2c2c;
+  	background: url("http://i.imgur.com/V9ZVVez.png") rgba(0,0,0,0.2);
+  	position: relative;
+  	right: 0px;
+  	top: 0px;
+  	float: left;
+  	width: 25%;
+  	height: 100%;
+  }
+  
+  h1 {
+    display: none;
+  }
+  
+  #logo-wrapper {
+    left: 5%;
+	max-height: 100%;
+	display: table;
+    position: fixed; 	
+    margin-top: 50px;
+    z-index: 5;
+//    top: 50%;
+//    transform: translateY(-50%);						
+//    -webkit-transform: -webkit-translateY(-50%);	//to center vertically
+  }
+  
+  #logo-wrapper  > #go {
+    float: left;
+    display: table-cell;
+	vertical-align: middle;
+	padding-left: 25px;
+  }
+  
+  #logo-wrapper  > #be {
+  	float: left;
+  	clear: both;
+  	margin-left: 10px;
+  	display: table-cell;
+  	vertical-align: middle;
+  }
+
+  #logo-wrapper  > #go > img {
+	max-height: 100%;
+	width: 160px;
+	position: relative;
+	z-index: 5;
+  }
+  
+  #logo-wrapper  > #be > img {
+	max-height: 100%;
+	width: 200px;
+	position: relative; 
+	z-index: 5;
+  }
+  
+  
+  
+  #login-wrapper {
+    padding-top: 10px;
+    margin: auto;
+  }
+  
+  .login, .logout, .signup {
+    font: 12px Arial, Helvetica, sans-serif;
+    color: #fff;
+    text-transform: uppercase;
+    vertical-align: middle;
+    text-align: center;
+    text-decoration: none;
+  }
+  
+  .signup, .logout {
+    padding: 6px 10px;
+    border-radius: 3px;
+    font-weight: bold;
+    background-color: #3a3c3e;
+  }
+  
+  .content-block {
+     z-index: 10;
+     position: relative;
+     background-color: #fff;
+  }
+  
+  #form-create {
+  
+  }
+  
+  .form-state {
+  	
+  }
+  
+  .helper-form {
+    padding: 150px 100px;
+    display: block;
+    z-index: 10;
+    position: relative;
+  	background-color: inherit;
+  }
+  
+  #maps-block {
+    display: block;
+    width: 90%;
+    margin: 0 auto;
+    padding: 30px 0;
+    position: relative;
+  }
+  
+  #maps-block > img {
+    width: 100%;
+    position: relative;
+  }
+  
+  .align-right {
+    float: right;
+    padding-right: 40px;
+  }
+  
+
+@media all and (max-width: 600px) {
+
+  header {
+	height: 320px;
+	background-color: #222;
+  }
+	
+  #bar {
+    background-size: 100% auto;
+    background-position: 50% 0%;
+    width: 100%;
+  }
+
+  #logo-wrapper  {
+    position: relative;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%)
+  }
+  
+  #user-toolbar {
+  	position: relative;
+  	background-color: #2c2c2c;
+  	width: 100%;
+  	height: 120px;
+  	right: 0px;
+  	top: 0px;
+  }
+}
+
+
+@media all and (max-width: 450px) {
+
+  header {
+	height: 320px;
+	background-color: #222;
+	background-size: auto 100%;
+    background-position: 50% 0%;
+  }
+	
+  #bar {
+    width: 100%;
+  }
+  
+  #user-toolbar {
+  	position: relative;
+  	background-color: #2c2c2c;
+  	width: 100%;
+  	height: 150px;
+  	float: left;
+  }
+
+  #logo-wrapper  {
+    position: relative;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%)
+  }
+}
+
+/* For the headers to look good, be sure to reset the margin and padding of the body */
+
+body {
+	margin:0;
+	padding:0;
+}

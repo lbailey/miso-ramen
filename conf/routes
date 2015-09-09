@@ -4,7 +4,29 @@
 
 # Home page
 GET     /                           controllers.Application.index
-GET     /db                         controllers.Application.db
+# GET     /db                         controllers.Application.db
+GET     /server/test                controllers.Application.pingServer
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
+#GET     /scripts/*file              controllers.Scripts.at(path="/public/javascripts", file)
+
+# Security
+GET		/login/								 controllers.Authentication.login
+POST	/login/								 controllers.Authentication.authenticate
+GET		/login/new/						 	 controllers.ManageUsers.create
+GET		/logout/							 controllers.Authentication.logout
+GET		/toolbar/							 controllers.Authentication.tools
+
+# Dashboard
+GET     /dashboard/                 		 controllers.Dashboard.index
+GET		/forms/sponsor/						 controllers.Creator.sponsor
+POST    /create/sponsor/                 	 controllers.Creator.addSponsor
+GET		/forms/homebound/					 controllers.Creator.homebound
+POST    /create/homebound/                 	 controllers.Creator.addHomebound	
+
+# Admin Login Manager
+GET		/manage/						 	 controllers.ManageUsers.manage
+POST	/manage/add/						 controllers.ManageUsers.addUser
+POST	/manage/remove/					 	 controllers.ManageUsers.removeUser
+POST	/manage/update/					 	 controllers.ManageUsers.updateUser
