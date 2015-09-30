@@ -6,19 +6,20 @@
   @nav()
 
 <div id="content-block-wrapper">
-  <div class="content-block" id="empty-sponsor-prompt">
+  <div class="content-block" id="login-prompt">
   	<p>
-  	Welcome to GoBe! Before you can be matched to a potential home-bound person, please give us some quick details about you or your organization.
+  	Login or sign up to begin. Here you can contribute to the cause by helping men and women build homes.
   	</p>
   </div>
   
-  <div class="content-block" id="sponsor-form-prompt">
+  <div class="content-block" id="signup-prompt">
   	<p>
   	Sign up with a few fields. 
   	</p>
-  	@form(action = routes.ManageUsers.addUser) {
+  	@form(action = routes.ManageUsers.addUser, 'id -> "create-user-login") {
   	<p class="form-text"><label>pick a username</label>
     	<input type="username" name="username" placeholder="username" id="username" size="30" pattern=".{5,}" required title="5 characters minimum">
+        <span class="form-service-msg"></span>
     </p><p class="form-text"><label>and a password</label>
     	<input type="password" name="password" id="password" placeholder="password" size="30" pattern=".{5,}" required title="5 characters minimum">
     </p><p class="form-text"><label>and your email</label>

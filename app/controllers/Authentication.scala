@@ -24,34 +24,35 @@ object Authentication extends Controller with Tools {
   var loginForm: Form[Secure.Login] = Form(
     mapping(
       "username" -> text,
-      "password" -> text
+      "password" -> text,
+      "email" -> optional(email)
     )
-    ((username, password) => Secure.Login(username, password))
-	((sec: Secure.Login) => Some((sec.username, sec.password)))
+    ((username, password, email) => Secure.Login(username, password, email))
+	((sec: Secure.Login) => Some((sec.username, sec.password, sec.email)))
   )
   
   def Authenticated[A](action: Action[A]): Action[A] = {
   	Action.async(action.parser) { implicit request =>
       if (Secure.isAuthorized(request)) action(request)  
-      else {	Future.successful(Ok(views.html.login(loginForm))
-      	.withCookies(Cookie("adcms_state", "0"), Cookie("adcms_user","")))
+      else {	Future.successful(Ok(views.html.signup(loginForm))
+      	.withCookies(Cookie("gobe_state", "0"), Cookie("gobe_user","")))
       }
     }
   }
 
   def login = Authenticated { Action { implicit request =>
-    Redirect("/dashboard/")
+    Redirect("/go/")
   }}
   
   def logout = Action { implicit request =>
-    Redirect("/login/").withSession(request2session - "user")
-    	.withCookies(Cookie("adcms_state", "0"), Cookie("adcms_user",""))
+    Redirect("/go/").withSession(request2session - "user")
+    	.withCookies(Cookie("gobe_state", "0"), Cookie("gobe_user",""))
   }
   
   def authenticate =  Action { implicit request =>
     loginForm.bindFromRequest.fold(
       hasErrors = { form =>
-        BadRequest(views.html.login(loginForm))
+        BadRequest(views.html.signup(loginForm))
       },
       
       success = { secureCreds => 
@@ -64,11 +65,11 @@ object Authentication extends Controller with Tools {
         val win:Boolean = Secure.authorize(creds)
         if (win) {
           val encodedUser = Secure.encodeUser(secureCreds.username)
-    	  Redirect("/").withSession(request2session + ("user" -> encodedUser))
-        	.withCookies(Cookie("adcms_state", "1", maxAge), Cookie("adcms_user", creds.username, maxAge))
+    	  Redirect("/go/").withSession(request2session + ("user" -> encodedUser))
+        	.withCookies(Cookie("gobe_state", "1", maxAge), Cookie("gobe_user", creds.username, maxAge))
         } else {
-          Redirect("/login/")
-        	.withCookies(Cookie("adcms_state", "3"), Cookie("adcms_user",""))
+          Redirect("/go/")
+        	.withCookies(Cookie("gobe_state", "3"), Cookie("gobe_user",""))
         }
       })
   } 
@@ -98,11 +99,11 @@ object ManageUsers extends Controller with Tools {
       },
       
       success = { secureCreds =>    
-        var creds = Secure.Login(secureCreds.username, secureCreds.password)
-		if (Secure.isAuthorized(request) && Secure.isAdmin(request)) { 
+        var creds = Secure.Login(secureCreds.username, secureCreds.password, secureCreds.email)
       	  Vault.writeNew(creds)
-      	  Ok(views.html.loginmanager(Secure.userList()))
-      	} else Ok("not admin")
+      	  val encodedUser = Secure.encodeUser(secureCreds.username)
+    	  Redirect("/go/").withSession(request2session + ("user" -> encodedUser))
+        	.withCookies(Cookie("gobe_state", "1", Authentication.maxAge), Cookie("gobe_user", creds.username, Authentication.maxAge))
     })
   } 
   

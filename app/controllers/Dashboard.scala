@@ -17,11 +17,11 @@ object Dashboard extends Controller with Tools {
     if (Secure.isAdmin(request)) { 
       Ok(views.html.admindash(HomeboundOps.all(), SponsorOps.all()))
     }
-    else Ok(views.html.dashboard())
+    else Ok(views.html.dashboard(Authentication.loginForm))
   }}
   
   def somethingelse = Authenticated { Action { implicit request =>
-	  Ok(views.html.dashboard())
+	  Ok(views.html.dashboard(Authentication.loginForm))
     } 
   }
   

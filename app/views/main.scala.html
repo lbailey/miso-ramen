@@ -1,4 +1,5 @@
-@(title: String)(content: Html)
+@(title: String)(content: Html)(implicit toolbar : models.Secure.Toolbar)
+@import helper._
 
 <!DOCTYPE html>
 
@@ -9,28 +10,45 @@
         
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
         <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
-        <link href="@routes.Assets.at("stylesheets/bootstrap.min.css")" rel="stylesheet" media="screen">
+        <!--<link href="@routes.Assets.at("stylesheets/bootstrap.min.css")" rel="stylesheet" media="screen">-->
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
         
         <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
         <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
         <script src="//ajax.microsoft.com/ajax/jquery.validate/1.7/jquery.validate.min.js"></script>
-        <script src="@routes.Assets.at("javascripts/main.js")" type="text/javascript"></script>
+        <!--<script src="@routes.Assets.at("javascripts/main.js")" type="text/javascript"></script>-->
     </head>
     <body>
-  @nav()
   
-<div id="sticky-bar-anchor"></div>
-<div id="sticky-bar">GoBE
-<div id="login-wrapper" class="align-right">
-  <p class="login">Logged in as:<b> admin </b>&nbsp;
-  	<a class="logout" href="/logout/" target="_top">logout</a>
-  </p>
-</div>
-</div>
-    
-    
+    @nav()
+  
+	<div id="sticky-bar-anchor"></div>
+	<div id="sticky-bar"><span id="gobe-text">goBE</span>
+	  <div class="align-right login-wrapper">
+	  	@toolbar.user.map { user =>
+		@if(toolbar.authorized) {
+		<p class="login">
+	  	  <span id="helper-text">Logged in as:</span><b> @user </b>&nbsp;
+  	  		<a class="logout" href="@routes.Authentication.logout" target="_top">logout</a>
+    	</p>
+		}
+		@if(!toolbar.authorized) {
+		<p class="login">    
+			<article class="login-form-state">
+			@form(action = routes.Authentication.authenticate) {	 	  
+			  <input type="username" name="username" placeholder="username" id="username" required />  
+			  <input type="password" name="password" placeholder="password" id="password" required />  
+			  <input type="submit" id="loginbutton" value="Login">
+			  <input type="button" id="signup-button-sticky" value="Sign Up">
+			}
+			</article>
+		</p>
+		}}
+	  </div>
+	</div>
+	
     @content
+    
     </body>
 
 <script type="text/javascript">
@@ -45,14 +63,49 @@ function sticky_relocate() {
       	}, 50 );
     } else {
         $('#sticky-bar').removeClass('stick');
-        $("#sticky-bar").css("margin-top","-60px");
+        $("#sticky-bar").css("margin-top","0px");
     }
 }
 
-$(function () {
+function signup_process() {
+    $('#login-prompt').css("visibility","hidden");
+    $('#signup-prompt').css("visibility","visible");
+    var $marginLefty = $('#signup-prompt');
+    $marginLefty.fadeIn(200).animate({
+      marginLeft: "-42%",
+      left: "0%"
+    }, 100 );
+}
+
+function check_username() {
+    var username = $(this).val();
+    console.log(username);
+	$.get("/services/unique/"+username)
+	 .done(function(data) {
+	    var spanMsg = $('#create-user-login span.form-service-msg');
+	    var isTrueSet = (data === 'true');
+	    if (isTrueSet) {
+	       $('#create-user-login :input[name="username"]')[0].setCustomValidity('');
+	       spanMsg.removeClass("red").addClass("green");
+	       spanMsg.html("available!");
+	    } else {
+	       //cannot cast from $(this)
+	       $('#create-user-login :input[name="username"]')[0].setCustomValidity(username + ' is not available');
+	       spanMsg.addClass("red");
+	       spanMsg.html(username + " is not available");
+	       console.log("Please choose again");
+	    }
+    });
+}
+
+$(document).ready(function(){
     $(window).scroll(sticky_relocate);
-    sticky_relocate();
+    sticky_relocate();  
+    $("#signup-button-top").bind("click", signup_process);
+    $("#signup-button-sticky").bind("click", signup_process);
+    $('#create-user-login :input[name="username"]').on( "focusout", check_username);  
 });
+
 </script>
 </html>
 

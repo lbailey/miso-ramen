@@ -19,7 +19,7 @@ GET		/logout/							 controllers.Authentication.logout
 GET		/toolbar/							 controllers.Authentication.tools
 
 # Dashboard
-GET     /dashboard/                 		 controllers.Dashboard.index
+GET     /go/                 		 		 controllers.Dashboard.index
 GET		/forms/sponsor/						 controllers.Creator.sponsor
 POST    /create/sponsor/                 	 controllers.Creator.addSponsor
 GET		/forms/homebound/					 controllers.Creator.homebound
@@ -30,3 +30,8 @@ GET		/manage/						 	 controllers.ManageUsers.manage
 POST	/manage/add/						 controllers.ManageUsers.addUser
 POST	/manage/remove/					 	 controllers.ManageUsers.removeUser
 POST	/manage/update/					 	 controllers.ManageUsers.updateUser
+
+
+#Services
+GET		/services/unique/		          	 controllers.Service.empty
+GET		/services/unique/:login          	 controllers.Service.uniqueLogin(login:String)

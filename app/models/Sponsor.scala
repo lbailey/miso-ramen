@@ -63,7 +63,7 @@ object SponsorOps extends Object {
   
   def remove(sponsor: Sponsor) {
     Logger.debug("removing user: " + sponsor.sponsorName)
-    SponsorDAO.removeById(recall(sponsor).get._id) 
+    SponsorDAO.removeById(recallById(sponsor).get._id) 
   }
   
   def recallById(sponsor: Sponsor): Option[Sponsor] = {
@@ -71,8 +71,18 @@ object SponsorOps extends Object {
   	find //return
   }
   
-  def recall(sponsor: Sponsor): Option[Sponsor] = {
+  def recallByName(sponsor: Sponsor): Option[Sponsor] = {
   	val find = SponsorDAO.findOne(MongoDBObject("sponsorName" -> sponsor.sponsorName))
+  	find //return
+  }
+  
+  def recallByLoginId(sponsor: Sponsor): Option[Sponsor] = {
+  	val find = SponsorDAO.findOne(MongoDBObject("userLoginId" -> sponsor.userLoginId))
+  	find //return
+  }
+  
+  def recallByLoginString(associatedLogin: String): Option[Sponsor] = {
+  	val find = SponsorDAO.findOne(MongoDBObject("userLoginId" -> associatedLogin))
   	find //return
   }
   

@@ -9,6 +9,7 @@ import play.api.mvc._
 import models.Secure
 import models.Secure.Tools
 import controllers.Authentication.Authenticated
+import controllers.Authentication.loginForm
 
 object Application extends Controller with Tools {
 
@@ -17,6 +18,6 @@ object Application extends Controller with Tools {
   }
   
   def index = Authenticated { Action { implicit request =>
-    Ok(views.html.index())
+    Ok(views.html.signup(Authentication.loginForm))
   }}
 }

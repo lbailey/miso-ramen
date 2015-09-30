@@ -29,13 +29,15 @@ import com.novus.salat.Context
 
 
 import mongoContext._
+import models.Sponsor
+import models.SponsorOps._
 import org.bson.types.ObjectId
 
 
 object Secure {
 
-  case class Login(username: String, password: String)
-  case class Toolbar(menu: Seq[Link], user: Option[String], authorized: Boolean)
+  case class Login(username: String, password: String, email: Option[String] = None)
+  case class Toolbar(menu: Seq[Link], user: Option[String], profile: Option[Sponsor], authorized: Boolean, isAdmin: Boolean)
   case class Link(url: String, name: String)
   
   val RedirectUrlRE = new Regex("""[^/login/]""")
@@ -46,20 +48,19 @@ object Secure {
         Link("/pencils/create/", "Pencil"),
         Link("/openingcredits/create/", "Opening Credit"),
         Link("/skins/create/", "Skin"))
-      val cUser:Option[Cookie] = request.cookies.get("adcms_user")
+      val cUser:Option[Cookie] = request.cookies.get("gobe_user")
       val isLogged:Boolean = isAuthorized(request)
+      val admin:Boolean = isAdmin(request)
       val someUser:Option[String] = cUser match {
   		case None => None
   		case Some(username) => Some(cUser.get.value)
-	  }
-      Toolbar(menu, someUser, isLogged)
+	  }	  
+	  var someSponsor:Option[Sponsor] = SponsorOps.recallByLoginString(someUser.getOrElse("none"))	  
+      Toolbar(menu, someUser, someSponsor, isLogged, admin)
     }
   }
 
   def authorize(sl: Login): Boolean = {   
-//  	if (Vault.recall(sl).forall(_.trim.isEmpty)) {
-//  		Vault.writeNew(Login("admin", "admin"))
-//  	}
 	val user:Option[User] = Vault.recall(sl)	
 	val cryptPassword = user match {
   		case None => ""
@@ -83,18 +84,18 @@ object Secure {
   }
   
   def isAdmin[A](implicit request: Request[A]): Boolean = {
-    val c:Option[Cookie] = request.cookies.get("adcms_user")
+    val c:Option[Cookie] = request.cookies.get("gobe_user")
     if (c.get.value == "admin") true
     else false
   }
   
   def getUser[A](implicit request: Request[A]): String = {
-    val c:Option[Cookie] = request.cookies.get("adcms_user")
+    val c:Option[Cookie] = request.cookies.get("gobe_user")
     c.get.value
   }
   
   def cookieStateSecure[A](implicit request: Request[A]): Boolean = {
-  	val c:Option[Cookie] = request.cookies.get("adcms_state")
+  	val c:Option[Cookie] = request.cookies.get("gobe_state")
   	val state:String = c match {
   		case None => ""
   		case Some(username) => c.get.value
@@ -109,7 +110,7 @@ object Secure {
   
   def userCookiesMatch[A](implicit request: Request[A]): Boolean = {
   	val s:Option[String] = request.session.get("user")
-  	val c:Option[Cookie] = request.cookies.get("adcms_user")
+  	val c:Option[Cookie] = request.cookies.get("gobe_user")
   	val username:String = Crypto.sign(c.get.value)
   	val sPass:String = s.get
     
@@ -120,11 +121,16 @@ object Secure {
   def userList(): List[User] = {
     Vault.all()
   }
+  
+  def checkUnique(username:String): Boolean = {
+    var unique = Secure.Login(username, "password")
+    Vault.recall(unique).isDefined
+  }	
 }
 
 
 
-case class User(_id: ObjectId = new ObjectId, u: String, p: String)
+case class User(_id: ObjectId = new ObjectId, u: String, p: String, e: String)
 
 object UserDAO extends SalatDAO[User, ObjectId](collection = MongoConnection()(
     current.configuration.getString("mongodb.default.db")
@@ -142,7 +148,7 @@ object Vault extends Object {
 
   def writeNew(sl: Secure.Login) {
 	Logger.debug("adding user: " + sl.username)
-  	val _id = UserDAO.insert(User(u = sl.username, p = Secure.encodePass(sl.password)))
+  	val _id = UserDAO.insert(User(u = sl.username, p = Secure.encodePass(sl.password), e = sl.email.getOrElse("none")))
   }
   
   def remove(sl: Secure.Login) {
@@ -155,8 +161,12 @@ object Vault extends Object {
   	find //return
   }
   
-  def update(_id: ObjectId, password: String) {
+  def updatePassword(_id: ObjectId, password: String) {
 	UserDAO.update(q = MongoDBObject("_id" -> _id), o = MongoDBObject("$set" -> MongoDBObject("p" -> Secure.encodePass(password))), upsert = false, multi = false)
+  }
+  
+  def updateEmail(_id: ObjectId, email: String) {
+	UserDAO.update(q = MongoDBObject("_id" -> _id), o = MongoDBObject("$set" -> MongoDBObject("p" -> email)), upsert = false, multi = false)
   }
 }
   
