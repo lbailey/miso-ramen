@@ -1,0 +1,108 @@
+@()(implicit toolbar : models.Secure.Toolbar)
+@import helper._
+
+@main("Account"){
+<main id="account">
+
+@if(toolbar.authorized) {
+<div id="content-block-wrapper">
+	<div class="content-block" id="sponsor-completed-homebounds">
+	  <p>Completed Box Drops</p>
+	  @if(toolbar.profile.isDefined && toolbar.profile.get.completedMoves.size > 0) {
+	    <!-- @toolbar.profile.get.completedMoves.size-->
+	  } else {
+	  <p class="listing-text">
+	    <span class="numbering">1.</span>
+	    <span id="name">Jason Webb</span>
+	    <span id="email">jason.webb@@gobe.com</span>
+	    <span class="date" id="date-moved"><span>10</span>10/5/2015</span>
+	  </p>
+	
+	  <p class="listing-text">
+	    <span class="numbering">2.</span>
+	    <span id="name">Marge Lawson</span>
+	    <span id="email">marge.lawson@@gobe.com</span>
+	    <span class="date" id="date-moved"><span>10</span>10/13/2015</span>
+	  </p>
+	  
+	  <p class="listing-text">
+	    <span class="numbering">3.</span>
+	    <span id="name">George Reed</span>
+	    <span id="email">george.reed@@gobe.com</span>
+	    <span class="date" id="date-moved"><span>10</span>10/28/2015</span>
+	  </p>
+	  
+	  <p class="listing-text">
+	    <span class="numbering">3.</span>
+	    <span id="name"> -- </span>
+	    <span id="email"> -- </span>
+	    <span class="date" id="date-moved"><span>00</span>--/--/----</span>
+	  </p>
+	  }
+	</div>
+	
+	<div class="content-block" id="user-tools-login">
+	<p>Account</p>
+	<p class="account listing-text">
+	  <span id="name">@toolbar.user</span>
+	  <span id="email">lcbailey@@syr.edu</span>
+	  <a id="edit-user-data" class="edit-button">edit</a>
+	</p>
+	  <form id="tools-update-email">
+	    <input class="form-button" type="submit" id="change-password"  tabindex="2" value="Update">
+	    <input type="email" name="email" id="user-email" placeholder="email@@example.com" tabindex="1" required>
+     	<label>new email</label>
+     </form><br/>
+     <form id="tools-update-password">
+        <input class="form-button" type="submit" id="change-password" value="Update"  tabindex="4" >
+        <input type="password" name="password" id="password" placeholder="password" pattern=".{5,}"  tabindex="3" required title="5 characters minimum">
+	  	<label>new password</label>
+	  </form>
+	</div>
+	
+	@if(toolbar.profile.isDefined) {
+	<div class="content-block" id="user-tools-profile">
+	<p>Sponsor Profile</p>
+	<p class="account listing-text">
+	  <span id="name">@toolbar.profile.get.sponsorName</span>
+	  <br/><br/><span id="address">@toolbar.profile.get.workingAddress</span>
+	  @if(toolbar.profile.get.pointOfContact.nonEmpty) {
+	  <br/><br/><span id="address">@toolbar.profile.get.pointOfContact</span>
+	  }
+	  @if(toolbar.profile.get.phoneNumber.nonEmpty) {
+	  <br/><br/><span id="address">@toolbar.profile.get.phoneNumber</span>
+	  }
+	  <a id="edit-sponsor-data" class="edit-button">edit</a>
+	</p>
+	  <form id="tools-update-sponsor">
+	    <input type="text" name="sponsorName" id="sponsorName" tabindex="1" required>
+	    <label style="width: 140px;">Sponsor Name</label><br/>
+        <input type="text" name="street" id="street" placeholder="Hollywood Blvd" tabindex="2" required>
+        <label style="width: 140px;">Street Name</label><br/>
+        <input type="text" name="zip" id="zip" placeholder="90210" size="8" tabindex="4" pattern="(\d{5}([\-]\d{4})?)" required>
+		<input type="text" name="city" id="city" placeholder="Los Angeles" tabindex="3" style="margin-right: 7px;" required>
+        <label>City and Zip</label><br/>
+
+		<input type="text" name="pointOfContact" id="pointOfContact" size="22" tabindex="5" required>
+		<label>Point of Contact Name</label><br/>
+		<input type="text" name="phoneNumber" id="org-phone" size="20" tabindex="6">
+		<label>Point of Contact Number</label><br/>
+		
+		<input type="hidden" name="userLoginId" id="userLoginId" value="@toolbar.profile.get.userLoginId">			
+		<input type="hidden" name="location.latitude" id="location_latitude">
+		<input type="hidden" name="location.longitude" id="location_longitude">
+		<input type="hidden" id="hasFirstDrop" name="hasFirstDrop" value="@toolbar.profile.get.hasFirstDrop">
+		<input type="hidden" id="isAuthorized" name="isAuthorized" value="@toolbar.profile.get.isAuthorized">
+		<input type="hidden" name="workingAddress" id="workingAddress" value="">
+			
+		<input class="form-button" type="submit" id="org-sponsorsubmit" tabindex="7">
+	  </form>
+	</div>
+	}
+
+</div>
+}
+
+</main>
+}
+

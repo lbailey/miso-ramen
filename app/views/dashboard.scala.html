@@ -3,31 +3,92 @@
 
 @main("Dashboard"){
 <main id="dashboard">
-  @nav()
 
+@toolbar.canWrite
+
+@if(toolbar.authorized && !toolbar.profile.isDefined) {
 <div id="content-block-wrapper">
-  <div class="content-block" id="empty-sponsor-prompt">
+  <div class="content-block" id="non-sponsor-prompt">
   	<p>
-  	Welcome to GoBe! Before you can be matched to a potential home-bound person, please give us some quick details about you or your organization.
+  	Welcome to Gobe!
   	</p>
+  	<input type="button" id="proceed-to-sponsor" value="Next">
   </div>
   
   <div class="content-block" id="sponsor-form-prompt">
-  	<p>
-  	Sign up with a few fields. 
-  	</p>
-  	@form(action = routes.ManageUsers.addUser) {
-  	<p class="form-text"><label>pick a username</label>
-    	<input type="username" name="username" placeholder="username" id="username" size="30" pattern=".{5,}" required title="5 characters minimum">
-    </p><p class="form-text"><label>and a password</label>
-    	<input type="password" name="password" id="password" placeholder="password" size="30" pattern=".{5,}" required title="5 characters minimum">
-    </p><p class="form-text"><label>and your email</label>
-    	<input type="email" name="email" id="email" placeholder="email@@example.com" size="30" required>
-        <input class="form-button" type="submit" id="loginbutton">
-    </p>
-    }
+	  <ul class="sponsor-form-tabs">
+		<li><a href="#organization"><span class="form-tab">Organization</span></a></li>
+		<li><a href="#individual"><span class="form-tab">Individual</span></a></li>
+		<li><span class="empty-tab">partner</span></li>
+	  </ul>
+	  <div id="organization">
+	  <p>Come together as a group.
+	  @form(action = routes.Creator.addSponsor, 'id -> "create-sponsor-org") {
+		<p class="form-text"><label>Group Name</label>
+			<input type="text" name="sponsorName" id="sponsorName" size="35" tabindex="1" required>
+		</p><p class="form-text"><label>Street Name</label>
+			<input type="text" name="street" id="street" placeholder="Hollywood Blvd" tabindex="2" size="35" required>
+		</p><p class="form-text"><label>City and Zip</label>
+		    <input type="text" name="zip" id="zip" placeholder="90210" size="8" tabindex="4" pattern="(\d{5}([\-]\d{4})?)" required>
+		    <input type="text" name="city" id="city" placeholder="Los Angeles" tabindex="3" size="21" style="margin-right: 7px;" required>
+		</p><p class="form-text"><label>Point of Contact Name</label>
+			<input type="text" name="pointOfContact" id="pointOfContact" size="22" tabindex="5" required>
+		</p><p class="form-text"><label>Point of Contact Phone</label>
+			<input type="text" name="phoneNumber" id="org-phone" size="20" tabindex="6">
+
+			<input type="hidden" name="userLoginId" id="userLoginId" value="@toolbar.user">			
+			<input type="hidden" name="location.latitude" id="location_latitude">
+			<input type="hidden" name="location.longitude" id="location_longitude">
+			<input type="hidden" id="hasFirstDrop" name="hasFirstDrop" value="false">
+			<input type="hidden" id="isAuthorized" name="isAuthorized" value="false">
+			<input type="hidden" name="workingAddress" id="workingAddress" value="">
+			
+			<input class="form-button" type="submit" id="org-sponsorsubmit" tabindex="7">
+		</p>
+	  }
+	  </div>
+	  <div id="individual">
+		<p>Make a change by yourself.</p>
+		@form(action = routes.Creator.addSponsor, 'id -> "create-sponsor-indv") { 
+		<p class="form-text"><label>Your Name</label>
+			<input type="text" name="sponsorName" id="sponsorName" size="35" tabindex="1" required>
+		</p><p class="form-text"><label>City and Zip</label>
+		    <input type="hidden" name="street" id="street">
+		    <input type="text" name="zip" id="zip" placeholder="90210" tabindex="3" size="8" pattern="(\d{5}([\-]\d{4})?)" required>
+		    <input type="text" name="city" id="city" placeholder="Los Angeles" tabindex="2" size="20" style="margin-right: 7px;" required>
+		</p><p class="form-text"><label>Phone Number</label>
+			<input type="text" name="phoneNumber" id="indv-phone" size="30" tabindex="4">
+			
+			<input type="hidden" name="userLoginId" id="userLoginId" value="@toolbar.user">			
+			<input type="hidden" name="location.latitude" id="location_latitude">
+			<input type="hidden" name="location.longitude" id="location_longitude">
+			<input type="hidden" id="hasFirstDrop" name="hasFirstDrop" value="false">
+			<input type="hidden" id="isAuthorized" name="isAuthorized" value="false">
+			<input type="hidden" name="workingAddress" id="workingAddress" value="">
+			<input type="hidden" name="pointOfContact" id="pointOfContact" value="">	
+			
+			<input class="form-button" type="submit" id="indv-sponsorsubmit" tabindex="5">
+		</p>
+	  }
+	  </div>
   </div>
+  
+  <div id="image-grid-container">
+	  <div id="first-half">
+		<div class="image-block big horiz"><img src="https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/s640x640/sh0.08/e35/11313813_1631466727112747_538711832_n.jpg"></div>
+		<div class="image-block small vert bigger"><img src="https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/e35/11931058_396079390589084_1209669969_n.jpg"></div>
+		<div class="image-block small vert bigger"><img src="https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/e15/11374710_1451205395200955_265883484_n.jpg"></div>
+		<div class="image-block small horiz smaller"><img src="https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/s640x640/sh0.08/e35/11909934_1499054700392987_838566493_n.jpg"></div>
+	  </div>
+	  <div id="second-half">	
+		<div class="image-block big vert"><img src="https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/e15/11371023_482149165283653_604901708_n.jpg"></div>
+		<div class="image-block small horiz bigger"><img src="https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/e35/11821242_460006640846170_244274972_n.jpg"></div>
+		<div class="image-block small horiz last"><img src="https://scontent.cdninstagram.com/hphotos-xfa1/t51.2885-15/e35/11821868_1604268703173534_1107675525_n.jpg"></div>
+	  </div>
+  </div>
+
 </div>
+}
 
 </main>
 }

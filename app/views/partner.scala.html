@@ -1,0 +1,55 @@
+@()(implicit toolbar : models.Secure.Toolbar)
+@import helper._
+
+@main("Partner"){
+<main id="partner">
+
+@if(toolbar.authorized && !toolbar.profile.isDefined) {
+<div id="content-block-wrapper">
+  <div class="content-block" id="partner-prompt">
+  	<p>Partner Program</p>
+  	<p class="body-text">
+  	Are you a case-worker? Can this be something deterring for anyone who isn't? Yeah you, ditch.
+  	</p>
+  	<input type="button" id="proceed-to-partner-form" value="Next">
+  </div>
+  
+  	<div class="content-block" id="partner-form-prompt">
+	  <p>Use our system to help with yours.</p>
+	  <p class="body-text">As soon as your userid is cleared by an admin, you can begin using the system to enter Homebounds.</p>
+	  @form(action = routes.Creator.addSponsor, 'id -> "create-partner-indv") {
+		<p class="form-text"><label>Partner Organization</label>
+			<select name="sponsorName" required>
+  				<option value="United Way Los Angeles" selected>United Way Los Angeles</option>
+  				<option value="United Way Los Angeles">Other Valid Parter</option>
+  				<option value="United Way Los Angeles">Other Qualified Partner</option>
+			</select>
+		</p><p class="form-text"><label>Caseworker Name</label>
+			<input type="text" name="pointOfContact" id="pointOfContact" size="22" tabindex="5" required>
+		</p><p class="form-text"><label>Caseworker Phone</label>
+			<input type="text" name="phoneNumber" id="org-phone" size="20" tabindex="6">
+
+			<input type="hidden" name="userLoginId" id="userLoginId" value="@toolbar.user">			
+			<input type="hidden" name="location.latitude" id="location_latitude" value="34.039523">
+			<input type="hidden" name="location.longitude" id="location_longitude" value="-118.261734">
+			<input type="hidden" id="hasFirstDrop" name="hasFirstDrop" value="false">
+			<input type="hidden" id="isAuthorized" name="isAuthorized" value="false">
+			<input type="hidden" id="isPartner" name="isPartner" value="true">
+			<input type="hidden" name="workingAddress" id="workingAddress" value="1150 S Olive Street Suite T500 Los Angeles, CA 90015">
+			
+			<input class="form-button" type="submit" id="partner-indv-submit" tabindex="7">
+		</p>
+	  }
+	</div>
+</div> 
+
+}
+
+</main>
+<script type="text/javascript">
+$(document).ready(function(){
+  $("#footer").show();
+});
+</script>
+}
+

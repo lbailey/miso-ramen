@@ -30,15 +30,17 @@ import org.bson.types.ObjectId
 import mongoContext._
 import models.Location.GPS
 
-case class Sponsor(_id: ObjectId = new ObjectId, 
+case class Sponsor(_id: ObjectId = new ObjectId,
 					sponsorName: String, 
 					gpsLocation: LocationGPS, 
 					hasFirstDrop: Boolean = false, 
 					isAuthorized: Boolean = false, 
 					workingAddress: String, 
-					pointOfContact: String,
-					phoneNumber: String, 
+					pointOfContact: Option[String] = None,
+					phoneNumber: Option[String] = None, 
 					userLoginId: String,
+					isPartner: Option[Boolean] = None,
+					isFullCredence: Option[Boolean] = None,
 					completedMoves: List[Homebound]) {}
 
 
@@ -57,13 +59,24 @@ object SponsorOps extends Object {
   }
 
   def add(sponsor: Sponsor) {
+    val fixSponsor: Sponsor = sponsor.copy(_id = new ObjectId)
 	Logger.debug("adding sponsor: " + sponsor.sponsorName)
-  	val _id = SponsorDAO.insert(sponsor)
+  	val _id = SponsorDAO.insert(fixSponsor)
   }
   
   def remove(sponsor: Sponsor) {
     Logger.debug("removing user: " + sponsor.sponsorName)
     SponsorDAO.removeById(recallById(sponsor).get._id) 
+  }
+  
+  def removeByLoginString(associatedLogin: String) {
+    Logger.debug("removing sponsor profile of user: " + associatedLogin)
+    SponsorDAO.removeById(recallByLoginString(associatedLogin).get._id) 
+  }
+
+  def recall(sponsor: Sponsor): Option[Sponsor] = {
+  	val find = SponsorDAO.findOneById(sponsor._id)
+  	find //return
   }
   
   def recallById(sponsor: Sponsor): Option[Sponsor] = {
@@ -97,9 +110,11 @@ object SponsorOps extends Object {
       "hasFirstDrop" -> boolean,
       "isAuthorized" -> boolean,
       "workingAddress" -> nonEmptyText,
-      "pointOfContact" -> nonEmptyText,
-      "phoneNumber" -> nonEmptyText,
+      "pointOfContact" -> optional(text),
+      "phoneNumber" -> optional(text),
       "userLoginId" -> nonEmptyText,
+      "isPartner" -> optional(boolean),
+      "isFullCredence" -> optional(boolean),
       "completedMoves" -> ignored(List[Homebound]())
     )(Sponsor.apply)(Sponsor.unapply)
   )

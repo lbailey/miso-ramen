@@ -1,49 +1,82 @@
-@(creatorForm : Form[models.Homebound])(implicit toolbar : models.Secure.Toolbar)
+@(homebounds: List[models.Homebound])(implicit toolbar : models.Secure.Toolbar)
 @import helper._
 
-@main("Homebound Form"){
+@main("Homebound Creator"){
 <main id="homebound-form">
-<h1>Homebound Form</h1>
-@nav()
 
-<div class="content-block">
-<div id="homebound-helper-form" class="helper-form">
-@helper.form(action = routes.Creator.addHomebound()) {
-  @inputText(creatorForm("_id"),
-  			 '_label -> null,
-    		 'style -> "display: none")
-  @inputText(creatorForm("homeboundName"),
-    		 '_label -> "Name",
-    		 '_showConstraints -> false,
-    		 'size -> 30,
-    		 'placeholder -> "First Last")
-  @inputText(creatorForm("location.latitude"), 
-  						'_showConstraints -> false,
-  						'size -> 30)
-  @inputText(creatorForm("location.longitude"), 
-  						'_showConstraints -> false,
-  						'size -> 30)
-  @checkbox(creatorForm("isMoved"), '_showConstraints -> false)
-  @checkbox(creatorForm("hasSponsor"), '_showConstraints -> false)
-  @checkbox(creatorForm("alreadyInHome"), '_showConstraints -> false)
-  @inputText(creatorForm("urlProfilePic"), '_showConstraints -> false, 'size -> 30)
-  @inputText(creatorForm("homeAddress"), '_showConstraints -> false, 'size -> 30)
-  @textarea(creatorForm("bio"), args = 'rows -> 3, 'cols -> 40, '_showConstraints -> false) 
-  @inputText(creatorForm("age"), '_showConstraints -> false)
-  @checkbox(creatorForm("hasPets"), '_showConstraints -> false) 
-  @checkbox(creatorForm("hasKids"), '_showConstraints -> false)
-  @checkbox(creatorForm("hasBox"), '_showConstraints -> false) 
-  @inputText(creatorForm("currentSponsorId"), '_showConstraints -> false)
-  
- <input type="submit" value="Submit"/>
-}
-</div></div>
+<div id="content-block-wrapper">
+    <div class="content-block" id="homebound-entry">
+	  <p>Homebound Entry
+	  @form(action = routes.Creator.addHomebound, 'id -> "create-homebound") {
+		<p class="form-text"><label>Homebound Name</label>
+			<input type="text" name="homeboundName" id="homeboundName" placeholder="First Last" size="35" tabindex="1" required>
+		</p><p class="form-text"><label>Full Street Address</label>
+			<input type="text" name="street" id="street" placeholder="1234 Hollywood Blvd Apt 4" tabindex="2" size="35" required>
+		</p><p class="form-text"><label>City and Zip</label>
+		    <input type="text" name="zip" id="zip" placeholder="90210" size="8" tabindex="4" pattern="(\d{5}([\-]\d{4})?)" required>
+		    <input type="text" name="city" id="city" placeholder="Los Angeles" tabindex="3" size="21" style="margin-right: 7px;" required>
+		</p><p class="form-text"><label>Homebound Email</label>
+			<input type="email" name="emailAddress" id="emailAddress" placeholder="name@@example.com" size="25" tabindex="5">
+		</p><p class="form-text"><label>Homebound Phone</label>
+			<input type="text" name="phoneNumber" id="hm-phone" size="20" tabindex="6">		
+		</p><p class="form-text"><label>Special Notes</label>
+			<input type="text" name="bio" id="bio" size="35" tabindex="7" placeholder="Originally from Chicago" style="height: 25px; word-break: break-word;">
+		
+		</p><p class="form-text" style="margin-right: 20%;">
+			<input type="checkbox" id="hasPets" name="hasPets" value="false">
+			<span class="form-checkbox">has pets: </span>
+			<input type="checkbox" id="hasKids" name="hasKids" value="false">
+			<span class="form-checkbox">has children: </span>
+			<input type="checkbox" id="alreadyHome" name="alreadyHome" value="true" checked>
+			<span class="form-checkbox">living in home: </span>
+			
+		</p><p class="form-text">
+			<input type="hidden" name="location.latitude" id="location_latitude">
+			<input type="hidden" name="location.longitude" id="location_longitude">
+			<input type="hidden" name="homeAddress" id="homeAddress" value="">
+			<input type="hidden" name="createdByUser" id="createdByUser" value="@toolbar.user">
+			
+			<input class="form-button" type="submit" id="homebound-entry-submit" tabindex="8">
+		</p>
+	  }
+	</div>
+	
+	<div class="content-block" id="homebound-viewer">
+	<p class="sorting-header"><b>active homebounds</b> by @toolbar.user</p>
+	@for((hb, index) <- homebounds.zipWithIndex) {
+	<p class="listing-text @if(index == 0) { expanded } else { collapsed }">
+	  <span class="numbering">@{index+1}.</span>
+	  <span id="name">@hb.homeboundName</span>
+	  <span id="address">@hb.homeAddress</span>
+	  <a class="new-window" target="_blank" href="http://maps.google.com/maps?z=18&q=@hb.gpsLocation.latitude,@hb.gpsLocation.longitude">&#10066;</a>
+	  @if(hb.phoneNumber.isDefined || hb.emailAddress.isDefined) {	  
+	  <br/><span id="phone-email">@hb.phoneNumber @if(hb.phoneNumber.isDefined && hb.emailAddress.isDefined){&nbsp;&#10005;&nbsp;}@hb.emailAddress</span>
+	  }
+	  
+	  @if(hb.bio.isDefined) {
+	  <br/><span id="homebound-notes">@hb.bio</span>
+	  }
+	  <span class="homebound-checkbox">@if(hb.alreadyInHome) { &#9989; } else { &#10060;} living in home</span>
+	  @if(hb.hasKids) {
+	  <span class="homebound-checkbox">&#9989; has children</span>
+	  }
+	  @if(hb.hasPets) {
+	  <span class="homebound-checkbox">&#9989; has pets</span>
+	  }
+	  <span class="homebound-checkbox">@if(hb.currentSponsorId.isDefined) { &#9989;} else { &#10060; } assigned sponsor @if(hb.currentSponsorId.isDefined) {- @hb.currentSponsorId }</span>
+	  <span class="homebound-checkbox">&#10060; sponsor box-drop date</span>
+	  <span class="homebound-checkbox">@if(hb.isMoved) { &#9989; } else { &#10060; } has box (complete)</span>
+	  @defining(hb._id.getTimestamp().toLong*1000) { timestamp =>
+	  	<span class="date" id="date-added"><span>@("%te".format(timestamp))</span>@("%te".format(timestamp)) @("%tb".format(timestamp)) @("%tY".format(timestamp))</span>
+	  }
+	  <a id="remove-homebound-entry" class="delete-button">remove</a>
+	  <a id="edit-homebound-entry" class="edit-button">edit</a>
+	</p>
+	}
+	
+	</div>
+</div> 
 
 </main>
 }
 
-
-/*
-
-@if(creatorForm("isMoved").value.getOrElse("false") == "true"){checked="checked"}
-*/

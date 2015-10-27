@@ -20,4 +20,17 @@ object Application extends Controller with Tools {
   def index = Authenticated { Action { implicit request =>
     Ok(views.html.signup(Authentication.loginForm))
   }}
+  
+  def guidelines = Action { implicit request =>
+    Ok(views.html.legal())
+  }
+  
+  def calendar = Action { implicit request =>
+    Ok(views.html.calendar())
+  }
+  
+  def partner = Action { implicit request =>
+    Ok(views.html.partner())
+  }
+  
 }

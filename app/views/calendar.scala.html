@@ -1,0 +1,53 @@
+@()(implicit toolbar : models.Secure.Toolbar)
+@import helper._
+
+@main("Dashboard"){
+<main id="dashboard">
+
+<div id="content-block-wrapper">
+	<div id="cal-wrapper">
+		<div id="calendar"></div>
+	</div>
+</div> 
+@if(toolbar.authorized && !toolbar.profile.isDefined) {
+<p>cal tools here<p>
+}
+<br/><br/>
+
+</main>
+<script type="text/javascript">
+$(document).ready(function load_full_calendar() {
+   $('#calendar').fullCalendar({
+	header: {
+		left: 'today',
+		center: 'title',
+		right: 'prev,next'
+	},
+	defaultView: 'month',
+	editable: false,
+	events: [{
+	  title: 'Box Drop',
+	  start: '2015-10-10T13:00:00',
+	  end: '2015-10-10T15:30:00',
+	  className: ["calendar-event"]
+	},{
+	  title: 'Box Drop',
+	  start: '2015-10-24T13:00:00',
+	  end: '2015-10-24T15:30:00'
+	},{
+	  title: 'Box Drop',
+	  start: '2015-11-07T13:00:00',
+	  end: '2015-11-07T15:30:00'
+	},{
+	  title: 'Box Drop',
+	  start: '2015-11-21T13:00:00',
+	  end: '2015-11-21T15:30:00'
+	}
+	],
+	eventColor: '#fff',
+	eventTextColor: '#000'
+})
+});
+</script>
+}
+

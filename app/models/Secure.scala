@@ -36,8 +36,8 @@ import org.bson.types.ObjectId
 
 object Secure {
 
-  case class Login(username: String, password: String, email: Option[String] = None)
-  case class Toolbar(menu: Seq[Link], user: Option[String], profile: Option[Sponsor], authorized: Boolean, isAdmin: Boolean)
+  case class Login(username: String, password: String, email: Option[String] = None, priv: Option[Int] = None )
+  case class Toolbar(menu: Seq[Link], user: Option[String], profile: Option[Sponsor], authorized: Boolean, canWrite: Boolean = false, canMod: Boolean = false, isAdmin: Boolean)
   case class Link(url: String, name: String)
   
   val RedirectUrlRE = new Regex("""[^/login/]""")
@@ -54,9 +54,11 @@ object Secure {
       val someUser:Option[String] = cUser match {
   		case None => None
   		case Some(username) => Some(cUser.get.value)
-	  }	  
+	  }	 
+	  val write:Boolean = canWrite(someUser.getOrElse(""))
+      val mod:Boolean = canAdmin(someUser.getOrElse("")) 
 	  var someSponsor:Option[Sponsor] = SponsorOps.recallByLoginString(someUser.getOrElse("none"))	  
-      Toolbar(menu, someUser, someSponsor, isLogged, admin)
+      Toolbar(menu, someUser, someSponsor, isLogged, write, mod, admin)
     }
   }
 
@@ -85,7 +87,8 @@ object Secure {
   
   def isAdmin[A](implicit request: Request[A]): Boolean = {
     val c:Option[Cookie] = request.cookies.get("gobe_user")
-    if (c.get.value == "admin") true
+    //Logger.debug(c);
+    if (c != None && c.get.value == "admin") true
     else false
   }
   
@@ -126,11 +129,71 @@ object Secure {
     var unique = Secure.Login(username, "password")
     Vault.recall(unique).isDefined
   }	
+  
+  def addPermission(username:String,perm:Int) {
+    Vault.addPermission(username,perm)
+  }	
+  
+  def removePermissions(username:String) {
+    addPermission(username,1)
+  }	
+  
+  def getLogin(username:String): Option[User] = {
+    Vault.findUserByName(username)
+  }
+  
+  def canWrite(username:String): Boolean = {
+    val user:Option[User] = getLogin(username)
+    if (user.isDefined) {
+      def bool = user.get.a match {
+        case 2 => true
+      	case 3 => true
+        case _ => false
+      } 
+      bool
+    } else false
+  }
+  
+  def canWrite(sl: Login): Boolean = {
+    var perm = sl.priv.getOrElse(1);
+    def bool = perm match {
+      case 2 => true
+      case 3 => true
+      case _ => false
+    }
+    bool
+  }
+  
+  
+  def canAdmin(username:String): Boolean = {
+    val user:Option[User] = getLogin(username)
+    if (user.isDefined) {
+      def bool = user.get.a match {
+        case 3 => true
+        case _ => false
+      } 
+      bool
+    } else false
+  }
+  
+  def canAdmin(sl: Login): Boolean = {
+    var perm = sl.priv.getOrElse(1);
+    def bool = perm match {
+      case 3 => true
+      case _ => false
+    }
+    bool
+  }
+  
+  def removeUser(user:String) {
+    Vault.removeByUsername(user)
+  }
+  
 }
 
 
 
-case class User(_id: ObjectId = new ObjectId, u: String, p: String, e: String)
+case class User(_id: ObjectId = new ObjectId, u: String, p: String, e: String, a: Int = 1)
 
 object UserDAO extends SalatDAO[User, ObjectId](collection = MongoConnection()(
     current.configuration.getString("mongodb.default.db")
@@ -148,7 +211,7 @@ object Vault extends Object {
 
   def writeNew(sl: Secure.Login) {
 	Logger.debug("adding user: " + sl.username)
-  	val _id = UserDAO.insert(User(u = sl.username, p = Secure.encodePass(sl.password), e = sl.email.getOrElse("none")))
+  	val _id = UserDAO.insert(User(u = sl.username, p = Secure.encodePass(sl.password), e = sl.email.getOrElse("none"), a = 1))
   }
   
   def remove(sl: Secure.Login) {
@@ -156,9 +219,28 @@ object Vault extends Object {
     UserDAO.removeById(recall(sl).get._id) 
   }
   
+  def removeByUsername(username:String) {
+    Logger.debug("removing user: " + username)
+    UserDAO.removeById(findUserByName(username).get._id) 
+  }
+  
   def recall(sl: Secure.Login): Option[User] = {
   	val find = UserDAO.findOne(MongoDBObject("u" -> sl.username))
   	find //return
+  }
+  
+  def findUserByName(username: String): Option[User] = {
+  	val find = UserDAO.findOne(MongoDBObject("u" -> username))
+  	find //return
+  }
+  
+  def addPermission(username: String, perm: Int) {
+    val secureLogin = findUserByName(username)
+    if (secureLogin.isDefined) {
+      val id = secureLogin.get._id
+      UserDAO.update(q = MongoDBObject("_id" -> id), o = MongoDBObject("$set" -> MongoDBObject("a" -> perm)), upsert = false, multi = false)
+      Logger.debug("updated perms of " + username + " to " + perm)
+    }   
   }
   
   def updatePassword(_id: ObjectId, password: String) {
@@ -166,7 +248,7 @@ object Vault extends Object {
   }
   
   def updateEmail(_id: ObjectId, email: String) {
-	UserDAO.update(q = MongoDBObject("_id" -> _id), o = MongoDBObject("$set" -> MongoDBObject("p" -> email)), upsert = false, multi = false)
+	UserDAO.update(q = MongoDBObject("_id" -> _id), o = MongoDBObject("$set" -> MongoDBObject("e" -> email)), upsert = false, multi = false)
   }
 }
   

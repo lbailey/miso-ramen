@@ -20,8 +20,13 @@ object Dashboard extends Controller with Tools {
     else Ok(views.html.dashboard(Authentication.loginForm))
   }}
   
-  def somethingelse = Authenticated { Action { implicit request =>
-	  Ok(views.html.dashboard(Authentication.loginForm))
+  def account = Authenticated { Action { implicit request =>
+	  Ok(views.html.account())
+    } 
+  }
+  
+  def adminTools = Authenticated { Action { implicit request =>
+	  Ok("")
     } 
   }
   

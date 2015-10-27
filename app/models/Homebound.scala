@@ -33,6 +33,7 @@ case class Homebound(_id: ObjectId = new ObjectId,
 					isMoved: Boolean = false, 
 					hasSponsor: Boolean = false, 
 					alreadyInHome: Boolean = false,
+					createdByUser: String,
 					urlProfilePic: Option[String] = None, 
 					homeAddress: Option[String] = None, 
 					bio: Option[String] = None,
@@ -40,6 +41,8 @@ case class Homebound(_id: ObjectId = new ObjectId,
 					hasPets: Option[Boolean], 
 					hasKids: Option[Boolean], 
 					hasBox: Option[Boolean],
+					emailAddress: Option[String] = None, 
+					phoneNumber: Option[String] = None, 
 					currentSponsorId: Option[String] = None) {} //User ID
 
 
@@ -56,10 +59,22 @@ object HomeboundOps extends Object {
     val findList = HomeboundDAO.find(MongoDBObject.empty).toList
     findList //return
   }
+  
+  def allReverse(): List[Homebound] = {
+    val findList = HomeboundDAO.find(MongoDBObject.empty).toList
+    findList.reverse //return
+  }
+  
+  def recallByUser(partnerUserName: String): List[Homebound] = {
+  	val findList = HomeboundDAO.find(MongoDBObject("createdByUser" -> partnerUserName))
+  							   .sort(orderBy = MongoDBObject("_id" -> -1)).toList
+  	findList //return
+  }
 
   def add(hb: Homebound) {
+    val fixHomebound: Homebound = hb.copy(_id = new ObjectId)
 	Logger.debug("adding homebound: " + hb.homeboundName)
-  	val _id = HomeboundDAO.insert(hb)
+  	val _id = HomeboundDAO.insert(fixHomebound)
   }
   
   def remove(hb: Homebound) {
@@ -67,8 +82,18 @@ object HomeboundOps extends Object {
     HomeboundDAO.removeById(recall(hb).get._id) 
   }
   
+  def removeById(_id: ObjectId) {
+    Logger.debug("removing Homebound: " + _id)
+    HomeboundDAO.removeById(_id) 
+  }
+  
   def recallById(hb: Homebound): Option[Homebound] = {
   	val find = HomeboundDAO.findOneById(hb._id)
+  	find //return
+  }
+  
+  def recallById(_id: ObjectId): Option[Homebound] = {
+  	val find = HomeboundDAO.findOneById(_id)
   	find //return
   }
   
@@ -88,6 +113,7 @@ object HomeboundOps extends Object {
       "isMoved" -> boolean,
       "hasSponsor" -> boolean,
       "alreadyHome" -> boolean,
+      "createdByUser" -> nonEmptyText,
       "urlProfilePic" -> optional(text),
       "homeAddress" -> optional(text),
       "bio" -> optional(text),
@@ -95,6 +121,8 @@ object HomeboundOps extends Object {
       "hasPets" -> optional(boolean),
       "hasKids" -> optional(boolean),
       "hasBox" -> optional(boolean),
+      "emailAddress" -> optional(text),
+      "phoneNumber" -> optional(text),
       "currentSponsorId" -> optional(text)
     )(Homebound.apply)(Homebound.unapply)
   )

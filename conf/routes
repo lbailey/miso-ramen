@@ -11,6 +11,11 @@ GET     /server/test                controllers.Application.pingServer
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
 #GET     /scripts/*file              controllers.Scripts.at(path="/public/javascripts", file)
 
+# Basic
+GET		/guidelines/						 controllers.Application.guidelines
+GET		/calendar/						 	 controllers.Application.calendar
+GET		/partner/						 	 controllers.Application.partner
+
 # Security
 GET		/login/								 controllers.Authentication.login
 POST	/login/								 controllers.Authentication.authenticate
@@ -22,10 +27,14 @@ GET		/toolbar/							 controllers.Authentication.tools
 GET     /go/                 		 		 controllers.Dashboard.index
 GET		/forms/sponsor/						 controllers.Creator.sponsor
 POST    /create/sponsor/                 	 controllers.Creator.addSponsor
-GET		/forms/homebound/					 controllers.Creator.homebound
-POST    /create/homebound/                 	 controllers.Creator.addHomebound	
+GET		/homebound/					 		 controllers.Creator.homebound
+POST    /create/homebound/                 	 controllers.Creator.addHomebound
 
-# Admin Login Manager
+# Account
+GET     /account/                 		 	 controllers.Dashboard.account
+GET     /admin/                 		 	 controllers.Dashboard.adminTools	
+
+# Admin Tools
 GET		/manage/						 	 controllers.ManageUsers.manage
 POST	/manage/add/						 controllers.ManageUsers.addUser
 POST	/manage/remove/					 	 controllers.ManageUsers.removeUser
@@ -35,3 +44,7 @@ POST	/manage/update/					 	 controllers.ManageUsers.updateUser
 #Services
 GET		/services/unique/		          	 controllers.Service.empty
 GET		/services/unique/:login          	 controllers.Service.uniqueLogin(login:String)
+POST	/services/remove/:user         		 controllers.Service.removeUser(user:String)
+POST	/services/remove/hb/:_id         	 controllers.Service.removeHomebound(_id:ObjectId)
+POST	/set/permissions/admin/:user         controllers.Service.giveAdminPerm(user:String)
+POST	/set/permissions/write/:user         controllers.Service.giveWritePerm(user:String)

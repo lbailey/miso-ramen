@@ -24,10 +24,15 @@ object Creator extends Controller with Tools {
       Ok(views.html.sponsorform(SponsorOps.creatorForm))
   }}
   
+  /*
+  *   Ok(views.html.homeboundform(HomeboundOps.allReverse()))
+  *   Ok(views.html.homeboundform(HomeboundOps.recallByUser(toolbar.user.getOrElse("")))) //bad!
+  */
+  
   def homebound = Authenticated { Action { implicit request =>
-    if (Secure.isAdmin(request)) { 
-      Ok(views.html.homeboundform(HomeboundOps.creatorForm))
-    } else Ok(views.html.index())
+    if (Secure.isAdmin(request) || toolbar.canWrite) { 
+      Ok(views.html.homeboundform(HomeboundOps.allReverse()))
+    } else Redirect("/go/")
   }}
   
   def addHomebound =  Action { implicit request =>
@@ -53,14 +58,8 @@ object Creator extends Controller with Tools {
       
       success = { data =>    
         if (Secure.isAuthorized(request)) { 
-          //var sponsor = data.copy(userLoginId = Secure.getUser(request))
-          //data.userLoginId = Secure.getUser(request)
-          //Logger.debug("user is " + sponsor.userLoginId)
-          //Add-update email to user login here
-          
-      	  Logger.debug("data is " + data)
       	  SponsorOps.add(data)
-      	  Ok("Whee! created sponsor")
+      	  Redirect(routes.Dashboard.index)
       	} else Ok("not admin")
     })
   }

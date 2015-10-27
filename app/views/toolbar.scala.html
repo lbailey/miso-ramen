@@ -3,13 +3,15 @@
 
 <article id="toolbar-wrapper">
   <div class="header-links">
-  	<a href="/dashboard/">Home</a>
-  	<a href="/dashboard/">Rules</a>
-  	<a href="/dashboard/">Calendar</a>
-  	<a href="/dashboard/">Back</a>
+  	<a href="@routes.Dashboard.index">Home</a>
+  	<a href="@routes.Application.guidelines">Guidelines</a>
+  	<a href="@routes.Application.calendar">Calendar</a>
+  	@if(toolbar.isAdmin || toolbar.canWrite) {
+  	<a href="@routes.Creator.homebound">Homebound</a>  	
+  	} 
+  	<a href="@routes.Dashboard.account">Account</a>
+
   </div>
-   @toolbar.isAdmin
-   @toolbar.profile.isDefined
   <div class="login-wrapper">
 	@toolbar.user.map { user =>
 	@if(toolbar.authorized) {
