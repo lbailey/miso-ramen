@@ -4,8 +4,6 @@
 @main("Dashboard"){
 <main id="dashboard">
 
-@toolbar.canWrite
-
 @if(toolbar.authorized && !toolbar.profile.isDefined) {
 <div id="content-block-wrapper">
   <div class="content-block" id="non-sponsor-prompt">
