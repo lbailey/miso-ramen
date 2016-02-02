@@ -42,7 +42,7 @@ object Creator extends Controller with Tools {
       },
       
       success = { data =>    
-        if (Secure.isAuthorized(request) && Secure.isAdmin(request)) { 
+        if (Secure.isAuthorized(request) && (toolbar.canWrite || Secure.isAdmin(request))) { 
           Logger.debug("Adding Homebound " + data)
       	  HomeboundOps.add(data)
       	  Redirect(routes.Creator.homebound)
