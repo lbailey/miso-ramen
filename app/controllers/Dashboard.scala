@@ -5,8 +5,8 @@ import play.api.mvc._
 
 import models.Secure
 import models.Secure.Tools
-import models.HomeboundOps
-import models.SponsorOps
+import models.BowlOps
+import models.NoodOps
 
 import controllers.Authentication.Authenticated
 import controllers.Authentication.loginForm
@@ -15,7 +15,7 @@ object Dashboard extends Controller with Tools {
   
   def index = Authenticated { Action { implicit request =>
     if (Secure.isAdmin(request)) { 
-      Ok(views.html.admindash(HomeboundOps.all(), SponsorOps.all()))
+      Ok(views.html.admindash(BowlOps.all(), NoodOps.all()))
     }
     else Ok(views.html.dashboard(Authentication.loginForm))
   }}
@@ -29,6 +29,5 @@ object Dashboard extends Controller with Tools {
 	  Ok("")
     } 
   }
-  
   
 }

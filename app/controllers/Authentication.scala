@@ -41,11 +41,11 @@ object Authentication extends Controller with Tools {
   }
 
   def login = Authenticated { Action { implicit request =>
-    Redirect("/go/")
+    Redirect("/home/")
   }}
   
   def logout = Action { implicit request =>
-    Redirect("/go/").withSession(request2session - "user")
+    Redirect("/home/").withSession(request2session - "user")
     	.withCookies(Cookie("gobe_state", "0"), Cookie("gobe_user",""))
   }
   
@@ -65,10 +65,10 @@ object Authentication extends Controller with Tools {
         val win:Boolean = Secure.authorize(creds)
         if (win) {
           val encodedUser = Secure.encodeUser(secureCreds.username)
-    	  Redirect("/go/").withSession(request2session + ("user" -> encodedUser))
+    	  Redirect("/home/").withSession(request2session + ("user" -> encodedUser))
         	.withCookies(Cookie("gobe_state", "1", maxAge), Cookie("gobe_user", creds.username, maxAge))
         } else {
-          Redirect("/go/")
+          Redirect("/home/")
         	.withCookies(Cookie("gobe_state", "3"), Cookie("gobe_user",""))
         }
       })
@@ -102,7 +102,7 @@ object ManageUsers extends Controller with Tools {
         var creds = Secure.Login(secureCreds.username, secureCreds.password, secureCreds.email)
       	  Vault.writeNew(creds)
       	  val encodedUser = Secure.encodeUser(secureCreds.username)
-    	  Redirect("/go/").withSession(request2session + ("user" -> encodedUser))
+    	  Redirect("/home/").withSession(request2session + ("user" -> encodedUser))
         	.withCookies(Cookie("gobe_state", "1", Authentication.maxAge), Cookie("gobe_user", creds.username, Authentication.maxAge))
     })
   } 

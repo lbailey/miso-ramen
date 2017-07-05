@@ -1,0 +1,187 @@
+@(noods: List[models.Nood])(implicit toolbar : models.Secure.Toolbar)
+@import helper._
+
+@main("Noodle Creator"){
+<main id="bowl-form">
+
+<div id="content-block-wrapper">
+    <div class="content-block" id="bowl-entry">
+	  <p>Noodle Entry
+	  @form(action = routes.Creator.addNood, 'id -> "create-homebound") {
+		<p class="form-text"><label>Name</label>
+			<input type="text" name="noodName" id="noodName" placeholder="Place Name" size="35" tabindex="1" required>
+		</p><p class="form-text"><label class="optional">Nickname</label>
+			<input type="text" name="noodNick" id="noodNick" placeholder="Nickname" size="35" tabindex="2">
+		</p>
+		
+		
+		<!--<p class="form-text" style="margin-right: 20%;">
+			<input type="checkbox" id="hasPets" name="hasPets" value="false">
+			<span class="form-checkbox">has pets: </span>
+			<input type="checkbox" id="hasKids" name="hasKids" value="false">
+			<span class="form-checkbox">has children: </span>
+			<input type="checkbox" id="alreadyHome" name="alreadyHome" value="true" checked>
+			<span class="form-checkbox">living in home: </span>		
+		</p>-->
+		
+				
+		<p class="form-text single-select" style="margin-right: 8%; margin-bottom: 50px;">
+		<label>Type</label>
+			<input type="checkbox" id="noodType" name="noodType" value="Shop">
+			<span class="form-checkbox">shop: </span>
+			<input type="checkbox" id="noodType" name="noodType" value="Bar">
+			<span class="form-checkbox">bar: </span>
+			<input type="checkbox" id="noodType" name="noodType" value="Cafe">
+			<span class="form-checkbox">cafe: </span>
+			<input type="checkbox" id="noodType" name="noodType" value="Sight">
+			<span class="form-checkbox">sight: </span>
+			<input type="checkbox" id="noodType" name="noodType" value="Event">
+			<span class="form-checkbox">event: </span>
+			<input type="checkbox" id="noodType" name="noodType" value="Food"  style="clear:right;" checked>
+			<span class="form-checkbox">food: </span>
+			<input type="checkbox" id="noodType" name="noodType" value="Misc">
+			<span class="form-checkbox">misc: </span>		
+		</p>
+		
+		<p class="form-text" id="food" style="display:block; opacity: 1;"><label class="optional" style="font-size: smaller;">Food Subtype</label>
+			<input type="text" name="typeDetails" id="hm-web" size="35" placeholder="Ramen/French/Burgers/etc" tabindex="7">		
+		</p>
+		<div class="form-text" id="event" style="display:none; opacity: 0;"><label class="optional" style="font-size: smaller;">Event Dates</label>
+			<input type="text" name="event-date" id="event-date" size="35" tabindex="7">		
+			<div class="form-text single-select" style="margin: 0 100px 10px 0;">
+			  <input type="checkbox" id="typeDate" name="typeDate" value="1" checked>
+			  <span class="form-checkbox">single date: </span>
+			  <input type="checkbox" id="typeDate" name="typeDate" value="2">
+			  <span class="form-checkbox">range: </span>
+		      </div>
+		</div>
+
+
+		
+		<div id="location-tabs">
+		  <ul class="toggle-ul">
+		    <li><a href="#loc-gps" class="toggle-tab">GPS</a></li>
+		    <li><a href="#loc-street" class="toggle-tab">Street Address</a></li>
+		  </ul>
+		<div id="loc-street" class="form-toggle-wrapper show">
+			<p class="form-text"><label>Full Street Address</label>
+				<input type="text" name="street" id="street" placeholder="1234 Hollywood Blvd Apt 4" tabindex="2" size="35">
+			</p><p class="form-text"><label>City and Zip</label>
+		    	<input type="text" name="zip" id="zip" placeholder="90210" size="8" tabindex="4" pattern="(\d{5}([\-]\d{4})?)">
+		    	<input type="text" name="city" id="city" placeholder="Los Angeles" tabindex="3" size="21" style="margin-right: 7px;">
+			</p>
+		</div>
+		<div id="loc-gps" class="form-toggle-wrapper">
+			<p class="form-text"><label>Latitude</label>
+				<input type="text" name="location.latitude" id="location_latitude" placeholder="35.696099" tabindex="2" size="35" required>
+			</p><p class="form-text"><label>Longitude</label>
+		    	<input type="text" name="location.longitude" id="location_longitude" placeholder="139.570228" tabindex="3" size="35" required>
+			</p>
+		</div>
+		</div>
+		
+		<div class="form-text"><label>Rating</label>
+			<div class="rating-stars">
+    			<ul id="stars">
+      			  <li class='star' title='poor' data-value='1'>
+        			<i class='fa fa-star fa-fw'></i>
+      			  </li><li class='star' title='fair' data-value='2'>
+        			<i class='fa fa-star fa-fw'></i>
+      			  </li><li class='star' title='average' data-value='3'>
+        			<i class='fa fa-star fa-fw'></i>
+      			  </li><li class='star' title='good' data-value='4'>
+        			<i class='fa fa-star fa-fw'></i>
+      			  </li><li class='star' title='great' data-value='5'>
+        			<i class='fa fa-star fa-fw'></i></li>
+    			</ul>
+  			</div>	
+		</div>
+		
+		<p class="form-text"><label class="optional">Phone</label>
+			<input type="text" name="phoneNumber" id="hm-phone" size="20" tabindex="6">		
+		</p>
+		<p class="form-text"><label class="optional">Website</label>
+			<input type="text" name="website" id="hm-web" size="20" tabindex="7">		
+		</p><p class="form-text"><label>Description</label>
+			<input type="text" name="noodDesc" id="noodDesc" size="35" tabindex="8" maxlength="135" placeholder="Deliciously spicy miso ramen" style="height: 25px; word-break: break-word;">
+			<span class="character-count" max="135">0/135</span>
+		</p>
+		<p class="form-text">
+			<input type="hidden" id="hasNick" name="hasNick" value="false">
+			<input type="hidden" name="location.latitude" id="location_latitude">
+			<input type="hidden" name="location.longitude" id="location_longitude">
+			<input type="hidden" name="homeAddress" id="homeAddress" value="">
+			<input type="hidden" name="ratingPercent" id="ratingPercent">
+			<input type="hidden" name="userLoginId" id="userLoginId" value="lcbailey210">	
+			
+			<input class="form-button" type="submit" id="homebound-entry-submit" tabindex="8">
+		</p>
+	  }  
+	</div>
+
+	
+	<!-- Viewing Side -->
+	
+	<div class="content-block" id="data-viewer">
+	<p class="sorting-header"><b>noodles</b> by @toolbar.user</p>
+	@for((b, index) <- noods.zipWithIndex) {
+	<article class="listing-text @if(index == 0) { expanded } else { collapsed }" nood="6793768503">
+	  <span class="numbering">@{index+1}.</span>
+	  <span id="name">@b.noodName</span>
+	  <span id="nick" class="smaller">@b.noodName</span>
+	  <span class="nood-ranking smaller">4.0 &#9733;&#9733;&#9733;&#9733;&#9734;&nbsp;23 visited</span><br/>
+	  <span id="type-details">Food: Ramen</span>
+	  <br/><span id="homebound-notes">Deliciously spicy miso ramen with a Hokkaido corn twist</span>
+	  <div id="bowl-map-tabs">
+		  <ul class="toggle-ul">
+		    <li><a href="#list-bowls" class="toggle-tab">Bowls</a></li>
+		    <li><a href="#list-map" class="toggle-tab">Location</a></li>
+		    <li><a href="#list-rating" class="toggle-tab">Rating</a></li>
+		    <li><a href="#list-more" class="toggle-tab">More</a></li>
+		  </ul>
+		  <div id="list-bowls" class="form-toggle-wrapper show">
+			<p class="listing-text">
+			  <div class="checkbox-wrapper">
+				<span class="homebound-checkbox small inbowl" bowl="189745874336784">Warlord Ramen</span>
+	  			<span class="homebound-checkbox small inbowl" bowl="189743325345234">Favorite Ramen</span>
+	  			<span class="homebound-checkbox small inbowl" bowl="128974587432534">Visitors Favorites</span>
+	  			<span class="homebound-checkbox small outbowl" bowl="897458743985345">Ancient Japan</span>
+	  			<span class="homebound-checkbox small outbowl" bowl="374587433253454">DC Favorites</span>
+	  		  </div><div class="checkbox-wrapper">
+	  			<span class="homebound-checkbox small outbowl" bowl="189745874332554">Mojito Bars</span>
+	  			<span class="homebound-checkbox small outbowl" bowl="189745825345234">Matcha Shops</span>
+	  			<span class="homebound-checkbox small outbowl" bowl="123489745874332">Good Hikes</span>
+	  			<span class="homebound-checkbox small outbowl" bowl="897458743325345">Museums</span>
+	  			<span class="homebound-checkbox small outbowl" bowl="868458743325345">Holiday Favs</span>
+	  			<span class="homebound-checkbox small inbowl" bowl="897458743325345">Gregs Birthday</span>
+	  		  </div>
+			</p>
+		  </div>
+		  <div id="list-map" class="form-toggle-wrapper" style="display: none;">
+			<span id="address" class="small">1281 9th Ave #1102, San Diego, CA, 92101, USA</span>
+			<a class="new-window" target="_blank" href="http://maps.google.com/maps?z=18&q=10.8061,106.7120"><i class="fa fa-external-link"></i></a>
+			
+		  </div>
+		  <div id="list-rating" class="form-toggle-wrapper" style="display: none;">
+			<span class="nood-ranking small">your rating: 4.0 &#9733;&#9733;&#9733;&#9733;&#9734;</span>
+		  </div>
+		  <div id="list-more" class="form-toggle-wrapper" style="display: none;">
+			<span id="web" class="small">web: www.noodlefesta.com</span><br/>
+			<span id="phone" class="small">phone: (240) 887-9763</span>
+		  </div>
+	  </div>
+
+	  @defining(b._id.getTimestamp().toLong*1000) { timestamp =>
+	  	<span class="date" id="date-added"><span>@("%te".format(timestamp))</span>@("%te".format(timestamp)) @("%tb".format(timestamp)) @("%tY".format(timestamp))</span>
+	  }
+	  <a id="remove-homebound-entry" class="delete-button">remove</a>
+	  <a id="edit-homebound-entry" class="edit-button">edit</a>
+	</article>
+	}
+	
+	</div>
+</div> 
+
+</main>
+}
+

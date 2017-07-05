@@ -4,7 +4,7 @@
 @main("Partner"){
 <main id="partner">
 
-@if(toolbar.authorized && !toolbar.profile.isDefined) {
+@if(toolbar.authorized) {
 <div id="content-block-wrapper">
   <div class="content-block" id="partner-prompt">
   	<p>Partner Program</p>
@@ -17,9 +17,9 @@
   	<div class="content-block" id="partner-form-prompt">
 	  <p>Use our system to help with yours.</p>
 	  <p class="body-text">As soon as your userid is cleared by an admin, you can begin using the system to enter Homebounds.</p>
-	  @form(action = routes.Creator.addSponsor, 'id -> "create-partner-indv") {
+	  @form(action = routes.Creator.addNood, 'id -> "create-partner-indv") {
 		<p class="form-text"><label>Partner Organization</label>
-			<select name="sponsorName" required>
+			<select name="noodName" required>
   				<option value="United Way Los Angeles" selected>United Way Los Angeles</option>
   				<option value="United Way Los Angeles">Other Valid Parter</option>
   				<option value="United Way Los Angeles">Other Qualified Partner</option>

@@ -12,10 +12,10 @@ import controllers.Authentication.Authenticated
 import controllers.Authentication.loginForm
 
 import models.Location.GPS
-import models.Homebound
-import models.HomeboundOps
-import models.Sponsor
-import models.SponsorOps
+import models.Bowl
+import models.BowlOps
+import models.Nood
+import models.NoodOps
 
 import models.Secure
 import models.Secure.Tools
@@ -59,14 +59,14 @@ object Service extends Controller with Tools {
   def removeUser(user:String) = Authenticated { Action { implicit request =>	
       if (Secure.isAdmin(request) || toolbar.canMod) { 
          Secure.removeUser(user)
-         SponsorOps.removeByLoginString(user)
+         NoodOps.removeByLoginString(user)
 	  }
 	  Ok(user)
   }}
   
-  def removeHomebound(_id:ObjectId) = Authenticated { Action { implicit request =>	
+  def removeBowl(_id:ObjectId) = Authenticated { Action { implicit request =>	
       if (Secure.isAdmin(request) || toolbar.canMod) { 
-         HomeboundOps.removeById(_id)
+         BowlOps.removeById(_id)
 	  }
 	  Ok(_id.toString())
   }}

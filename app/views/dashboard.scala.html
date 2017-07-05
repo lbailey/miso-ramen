@@ -4,12 +4,12 @@
 @main("Dashboard"){
 <main id="dashboard">
 
-@if(toolbar.authorized && !toolbar.profile.isDefined) {
+@if(toolbar.authorized) {
 <div id="content-block-wrapper">
   <div class="content-block" id="non-sponsor-prompt">
   	<p>
-  	We believe our greatest challenges are overcome when communities move together.
-  	</p><p class="body-text">Select next to give us a little more information so we can pair you with a local move-in.</p>
+  	Hot yummy noodles, floating in a sea of broth. Where’s my friggin’ spoon?
+  	</p><p class="body-text">Create a map or search for a group already here.</p>
   	<input type="button" id="proceed-to-sponsor" value="Next">
   </div>
   
@@ -19,37 +19,17 @@
 		<li><a href="#individual"><span class="form-tab">Individual</span></a></li>
 		<li><span class="empty-tab">partner</span></li>
 	  </ul>
-	  <div id="organization">
-	  <p>Come together as a group.
-	  @form(action = routes.Creator.addSponsor, 'id -> "create-sponsor-org") {
-		<p class="form-text"><label>Group Name</label>
-			<input type="text" name="sponsorName" id="sponsorName" size="35" tabindex="1" required>
-		</p><p class="form-text"><label>Street Name</label>
-			<input type="text" name="street" id="street" placeholder="Hollywood Blvd" tabindex="2" size="35" required>
-		</p><p class="form-text"><label>City and Zip</label>
-		    <input type="text" name="zip" id="zip" placeholder="90210" size="8" tabindex="4" pattern="(\d{5}([\-]\d{4})?)" required>
-		    <input type="text" name="city" id="city" placeholder="Los Angeles" tabindex="3" size="21" style="margin-right: 7px;" required>
-		</p><p class="form-text"><label>Point of Contact Name</label>
-			<input type="text" name="pointOfContact" id="pointOfContact" size="22" tabindex="5" required>
-		</p><p class="form-text"><label>Point of Contact Phone</label>
-			<input type="text" name="phoneNumber" id="org-phone" size="20" tabindex="6">
-
-			<input type="hidden" name="userLoginId" id="userLoginId" value="@toolbar.user">			
-			<input type="hidden" name="location.latitude" id="location_latitude">
-			<input type="hidden" name="location.longitude" id="location_longitude">
-			<input type="hidden" id="hasFirstDrop" name="hasFirstDrop" value="false">
-			<input type="hidden" id="isAuthorized" name="isAuthorized" value="false">
-			<input type="hidden" name="workingAddress" id="workingAddress" value="">
-			
-			<input class="form-button" type="submit" id="org-sponsorsubmit" tabindex="7">
-		</p>
-	  }
-	  </div>
 	  <div id="individual">
 		<p>Make a change by yourself.</p>
-		@form(action = routes.Creator.addSponsor, 'id -> "create-sponsor-indv") { 
+		@form(action = routes.Creator.addNood, 'id -> "create-sponsor-indv") { 
 		<p class="form-text"><label>Your Name</label>
-			<input type="text" name="sponsorName" id="sponsorName" size="35" tabindex="1" required>
+			<input type="text" name="noodName" id="noodName" size="35" tabindex="1" required>
+		</p>
+		<p class="form-text"><label>Nood Type</label>
+			<input type="text" name="noodType" id="noodName" size="35" tabindex="1" required>
+		</p>
+		<p class="form-text"><label>Nood Nick</label>
+			<input type="text" name="noodNick" id="noodName" size="35" tabindex="1" required>
 		</p><p class="form-text"><label>City and Zip</label>
 		    <input type="hidden" name="street" id="street">
 		    <input type="text" name="zip" id="zip" placeholder="90210" tabindex="3" size="8" pattern="(\d{5}([\-]\d{4})?)" required>
@@ -68,20 +48,6 @@
 			<input class="form-button" type="submit" id="indv-sponsorsubmit" tabindex="5">
 		</p>
 	  }
-	  </div>
-  </div>
-  
-  <div id="image-grid-container">
-	  <div id="first-half">
-		<div class="image-block big horiz"><img src="https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/s640x640/sh0.08/e35/11313813_1631466727112747_538711832_n.jpg"></div>
-		<div class="image-block small vert bigger"><img src="https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/e35/11931058_396079390589084_1209669969_n.jpg"></div>
-		<div class="image-block small vert bigger"><img src="https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/e15/11374710_1451205395200955_265883484_n.jpg"></div>
-		<div class="image-block small horiz smaller"><img src="https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/s640x640/sh0.08/e35/11909934_1499054700392987_838566493_n.jpg"></div>
-	  </div>
-	  <div id="second-half">	
-		<div class="image-block big vert"><img src="https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/e15/11371023_482149165283653_604901708_n.jpg"></div>
-		<div class="image-block small horiz bigger"><img src="https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/e35/11821242_460006640846170_244274972_n.jpg"></div>
-		<div class="image-block small horiz last"><img src="https://scontent.cdninstagram.com/hphotos-xfa1/t51.2885-15/e35/11821868_1604268703173534_1107675525_n.jpg"></div>
 	  </div>
   </div>
 

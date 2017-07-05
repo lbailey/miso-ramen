@@ -1,4 +1,4 @@
-@(homebounds: List[models.Homebound], sponsors: List[models.Sponsor])(implicit toolbar : models.Secure.Toolbar)
+@(bowls: List[models.Bowl], noods: List[models.Nood])(implicit toolbar : models.Secure.Toolbar)
 
 @main("Admin Dashboard"){
 <main id="dashboard">
@@ -6,27 +6,33 @@
 
 <table class="dashboard-table">
   <tr>
-    <td>Sponsor Name</td>
+    <td>Nood Name</td>
+    <td>Nood Type</td>
+    <td>Has Nick?</td>
+    <td>Nood Nick</td>
+    <td>Nood Desc</td>
     <td>GPS</td>
-    <td>Has First Drop?</td>
-    <td>Is Authorized?</td>
-    <td>Working Address</td>
-    <td>Point of Contact</td>
+    <td>date Added</td>
+    <td>Is Rated?</td>
+    <td>Street Address</td>
     <td>Phone Number</td>
     <td>User Login ID</td>
-    <td>Completed Moves</td>
+    <td>Containing Bowls</td>
   </tr>
-	@sponsors.map { sp =>
+	@noods.map { sp =>
   <tr>
-	<td>@sp.sponsorName</td>
+	<td>@sp.noodName</td>
+	<td>@sp.noodType</td>
+	<td>@sp.hasNick</td>
+	<td>@sp.noodNick</td>
+	<td>@sp.noodDesc</td>
 	<td>@sp.gpsLocation</td>
-	<td>@sp.hasFirstDrop</td>
-	<td>@sp.isAuthorized</td>
-	<td>@sp.workingAddress</td>
-	<td>@sp.pointOfContact</td>
+	<td>@sp.dateAdded</td>
+	<td>@sp.isRated</td>
+	<td>@sp.streetAddress</td>
 	<td>@sp.phoneNumber</td>
 	<td>@sp.userLoginId</td>
-	<td>@sp.completedMoves</td>
+	<td>@sp.containingBowls</td>
 	</tr>
 	}
 </table>
@@ -47,21 +53,21 @@
     <td>Has Box?</td>
     <td>Sponsor User ID</td>
   </tr>
-	@homebounds.map { hb =>
+	@bowls.map { b =>
   <tr>
-	<td>@hb.homeboundName</td>
-	<td>@hb.gpsLocation</td>
-	<td>@hb.isMoved</td>
-	<td>@hb.hasSponsor</td>
-	<td>@hb.alreadyInHome</td>
-	<td>@hb.urlProfilePic</td>
-	<td>@hb.homeAddress</td>
-	<td>@hb.bio</td>
-	<td>@hb.age</td>
-	<td>@hb.hasPets</td>
-	<td>@hb.hasKids</td>
-	<td>@hb.hasBox</td>
-	<td>@hb.currentSponsorId</td>
+	<td>@b.bowlName</td>
+	<td>@b.mapCenter</td>
+	<td>@b.isMoved</td>
+	<td>@b.hasSponsor</td>
+	<td>@b.alreadyInHome</td>
+	<td>@b.urlProfilePic</td>
+	<td>@b.homeAddress</td>
+	<td>@b.bio</td>
+	<td>@b.age</td>
+	<td>@b.hasPets</td>
+	<td>@b.hasKids</td>
+	<td>@b.hasBox</td>
+	<td>@b.currentSponsorId</td>
 	</tr>
 	}
 </table>

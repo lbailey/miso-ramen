@@ -2,7 +2,7 @@ import com.typesafe.sbt.SbtNativePackager.packageArchetype
 import com.typesafe.sbt.packager.Keys._
 import play.PlayImport.PlayKeys._
 
-name := "go-be"
+name := "miso-ramen"
 
 version := "1.0-SNAPSHOT"
 
@@ -27,9 +27,15 @@ resolvers += Resolver.sonatypeRepo("snapshots")
 
 libraryDependencies <+= scalaVersion("org.scala-lang" % "scala-compiler" % _ )
 
-libraryDependencies += "com.novus" %% "salat" % "1.9.9"
+libraryDependencies += "com.github.salat" %% "salat" % "1.10.0" 
 
 libraryDependencies += "se.radley" %% "play-plugins-salat" % "1.5.0"
+
+libraryDependencies += "org.mongodb" %% "casbah" % "2.8.2"
+
+//libraryDependencies += "org.mongodb" %% "casbah" % "3.1.1"
+
+//"com.beachape" %% "enumeratum-play" % "1.5.12" 
 
 
 javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint")

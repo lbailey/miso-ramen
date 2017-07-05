@@ -7,6 +7,7 @@ import com.novus.salat.{TypeHintFrequency, StringTypeHintStrategy, Context}
 import play.api.Play
 import play.api.Play.current
 
+
 /*
  * All models must contain an implicit salat Context.
  * The context is somewhat like a hibernate dialect. 
@@ -25,7 +26,34 @@ package object mongoContext {
     }
     context.registerGlobalKeyOverride(remapThis = "id", toThisInstead = "_id")
     context.registerClassLoader(Play.classloader)
+    context
+  }
+}
+
+/*
+package object global {
+ implicit val ctx: Context = new Context() {
+   val name = Some("Play custom context")
+   classloaders = Seq(play.Play.classloader)
+ }
+ implicit val mathCtx = new MathContext(17, RoundingMode.HALF_UP)  //
+required for BigDecimal
+}
+
+package object mongoContext {
+  implicit val context = {
+    val context = new Context {
+      val name = "global"
+      override val typeHintStrategy = StringTypeHintStrategy(when = TypeHintFrequency.WhenNecessary, typeHint = "_t")
+    }
+    context.registerGlobalKeyOverride(remapThis = "id", toThisInstead = "_id")
+    context.registerClassLoader(Play.classloader)
  //   context.registerCustomTransformer(new models.LocationTransformer)
     context
   }
 }
+
+
+
+
+*/

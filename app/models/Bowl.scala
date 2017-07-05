@@ -19,7 +19,7 @@ import com.novus.salat.global._
 import com.novus.salat.annotations._
 
 import com.mongodb.casbah.commons.Imports._
-import com.mongodb.casbah.MongoConnection
+import com.mongodb.casbah.{MongoConnection, MongoClient, MongoClientURI, WriteConcern}
 
 import com.novus.salat.Context
 import org.bson.types.ObjectId
@@ -27,9 +27,9 @@ import org.bson.types.ObjectId
 import mongoContext._
 import models.LocationGPS
 
-case class Homebound(_id: ObjectId = new ObjectId, 
-					homeboundName: String, 
-					gpsLocation: LocationGPS, 
+case class Bowl(_id: ObjectId = new ObjectId, 
+					bowlName: String, 
+					mapCenter: LocationGPS, 
 					isMoved: Boolean = false, 
 					hasSponsor: Boolean = false, 
 					alreadyInHome: Boolean = false,
@@ -45,68 +45,63 @@ case class Homebound(_id: ObjectId = new ObjectId,
 					phoneNumber: Option[String] = None, 
 					currentSponsorId: Option[String] = None) {} //User ID
 
-
-object HomeboundDAO extends SalatDAO[Homebound, ObjectId](collection = MongoConnection()(
-    current.configuration.getString("mongodb.default.db")
-      .getOrElse(throw new PlayException("Configuration error",
-      "Could not find mongodb.default.db in settings"))
-  )("homebounds"))
+object BowlDAO extends SalatDAO[Bowl, ObjectId](collection = MongoClient(MongoClientURI("mongodb://localhost:27017/"))("ramendb")("bowls"))
   
   
-object HomeboundOps extends Object {
+object BowlOps extends Object {
 
-  def all(): List[Homebound] = {
-    val findList = HomeboundDAO.find(MongoDBObject.empty).toList
+  def all(): List[Bowl] = {
+    val findList = BowlDAO.find(MongoDBObject.empty).toList
     findList //return
   }
   
-  def allReverse(): List[Homebound] = {
-    val findList = HomeboundDAO.find(MongoDBObject.empty).toList
+  def allReverse(): List[Bowl] = {
+    val findList = BowlDAO.find(MongoDBObject.empty).toList
     findList.reverse //return
   }
   
-  def recallByUser(partnerUserName: String): List[Homebound] = {
-  	val findList = HomeboundDAO.find(MongoDBObject("createdByUser" -> partnerUserName))
+  def recallByUser(partnerUserName: String): List[Bowl] = {
+  	val findList = BowlDAO.find(MongoDBObject("createdByUser" -> partnerUserName))
   							   .sort(orderBy = MongoDBObject("_id" -> -1)).toList
   	findList //return
   }
 
-  def add(hb: Homebound) {
-    val fixHomebound: Homebound = hb.copy(_id = new ObjectId)
-	Logger.debug("adding homebound: " + hb.homeboundName)
-  	val _id = HomeboundDAO.insert(fixHomebound)
+  def add(b: Bowl) {
+    val fixBowl: Bowl = b.copy(_id = new ObjectId)
+	Logger.debug("adding bowl: " + b.bowlName)
+  	val _id = BowlDAO.insert(fixBowl)
   }
   
-  def remove(hb: Homebound) {
-    Logger.debug("removing user: " + hb.homeboundName)
-    HomeboundDAO.removeById(recall(hb).get._id) 
+  def remove(b: Bowl) {
+    Logger.debug("removing user: " + b.bowlName)
+    BowlDAO.removeById(recall(b).get._id) 
   }
   
   def removeById(_id: ObjectId) {
-    Logger.debug("removing Homebound: " + _id)
-    HomeboundDAO.removeById(_id) 
+    Logger.debug("removing Bowl: " + _id)
+    BowlDAO.removeById(_id) 
   }
   
-  def recallById(hb: Homebound): Option[Homebound] = {
-  	val find = HomeboundDAO.findOneById(hb._id)
+  def recallById(b: Bowl): Option[Bowl] = {
+  	val find = BowlDAO.findOneById(b._id)
   	find //return
   }
   
-  def recallById(_id: ObjectId): Option[Homebound] = {
-  	val find = HomeboundDAO.findOneById(_id)
+  def recallById(_id: ObjectId): Option[Bowl] = {
+  	val find = BowlDAO.findOneById(_id)
   	find //return
   }
   
-  def recall(hb: Homebound): Option[Homebound] = {
-  	val find = HomeboundDAO.findOne(MongoDBObject("homeboundName" -> hb.homeboundName))
+  def recall(b: Bowl): Option[Bowl] = {
+  	val find = BowlDAO.findOne(MongoDBObject("bowlName" -> b.bowlName))
   	find //return
   }
   
-  var creatorForm: Form[Homebound] = Form(
+  var creatorForm: Form[Bowl] = Form(
     mapping(
       "_id" -> ignored(new ObjectId),
-      "homeboundName" -> nonEmptyText,
-      "location" -> mapping(
+      "bowlName" -> nonEmptyText,
+      "mapCenter" -> mapping(
          "latitude" -> of(doubleFormat),
          "longitude" -> of(doubleFormat)
       	 )(LocationGPS.apply)(LocationGPS.unapply),
@@ -124,7 +119,7 @@ object HomeboundOps extends Object {
       "emailAddress" -> optional(text),
       "phoneNumber" -> optional(text),
       "currentSponsorId" -> optional(text)
-    )(Homebound.apply)(Homebound.unapply)
+    )(Bowl.apply)(Bowl.unapply)
   )
 }
   

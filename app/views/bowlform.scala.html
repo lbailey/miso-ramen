@@ -1,0 +1,82 @@
+@(bowls: List[models.Bowl])(implicit toolbar : models.Secure.Toolbar)
+@import helper._
+
+@main("Bowl Creator"){
+<main id="bowl-form">
+
+<div id="content-block-wrapper">
+    <div class="content-block" id="bowl-entry">
+	  <p>Bowl Entry
+	  @form(action = routes.Creator.addBowl, 'id -> "create-bowl") {
+		<p class="form-text"><label>Bowl Name</label>
+			<input type="text" name="bowlName" id="bowlName" placeholder="First Last" size="35" tabindex="1" required>
+		</p><p class="form-text"><label>Full Street Address</label>
+			<input type="text" name="street" id="street" placeholder="1234 Hollywood Blvd Apt 4" tabindex="2" size="35" required>
+		</p><p class="form-text"><label>City and Zip</label>
+		    <input type="text" name="zip" id="zip" placeholder="90210" size="8" tabindex="4" pattern="(\d{5}([\-]\d{4})?)" required>
+		    <input type="text" name="city" id="city" placeholder="Los Angeles" tabindex="3" size="21" style="margin-right: 7px;" required>
+		</p><p class="form-text"><label>bowl Email</label>
+			<input type="email" name="emailAddress" id="emailAddress" placeholder="name@@example.com" size="25" tabindex="5">
+		</p><p class="form-text"><label>bowl Phone</label>
+			<input type="text" name="phoneNumber" id="hm-phone" size="20" tabindex="6">		
+		</p><p class="form-text"><label>Special Notes</label>
+			<input type="text" name="bio" id="bio" size="35" tabindex="7" placeholder="Originally from Chicago" style="height: 25px; word-break: break-word;">
+		
+		</p><p class="form-text" style="margin-right: 20%;">
+			<input type="checkbox" id="hasPets" name="hasPets" value="false">
+			<span class="form-checkbox">has pets: </span>
+			<input type="checkbox" id="hasKids" name="hasKids" value="false">
+			<span class="form-checkbox">has children: </span>
+			<input type="checkbox" id="alreadyHome" name="alreadyHome" value="true" checked>
+			<span class="form-checkbox">living in home: </span>
+			
+		</p><p class="form-text">
+			<input type="hidden" name="location.latitude" id="location_latitude">
+			<input type="hidden" name="location.longitude" id="location_longitude">
+			<input type="hidden" name="homeAddress" id="homeAddress" value="">
+			<input type="hidden" name="createdByUser" id="createdByUser" value="@toolbar.user">
+			
+			<input class="form-button" type="submit" id="bowl-entry-submit" tabindex="8">
+		</p>
+	  }
+	</div>
+	
+	<div class="content-block" id="bowl-viewer">
+	<p class="sorting-header"><b>active bowls</b> by @toolbar.user</p>
+	@for((b, index) <- bowls.zipWithIndex) {
+	<p class="listing-text @if(index == 0) { expanded } else { collapsed }">
+	  <span class="numbering">@{index+1}.</span>
+	  <span id="name">@b.bowlName</span>
+	  <span id="address">@b.homeAddress</span>
+	  <a class="new-window" target="_blank" href="http://maps.google.com/maps?z=18&q=@b.mapCenter.latitude,@b.mapCenter.longitude">&#10066;</a>
+	  @if(b.phoneNumber.isDefined || b.emailAddress.isDefined) {	  
+	  <br/><span id="phone-email">@b.phoneNumber @if(b.phoneNumber.isDefined && b.emailAddress.isDefined){&nbsp;&#10005;&nbsp;}@b.emailAddress</span>
+	  }
+	  
+	  @if(b.bio.isDefined) {
+	  <br/><span id="bowl-notes">@b.bio</span>
+	  }
+	  <span class="bowl-checkbox">@if(b.alreadyInHome) { &#9989; } else { &#10060;} living in home</span>
+	  @if(b.hasKids) {
+	  <span class="bowl-checkbox">&#9989; has children</span>
+	  }
+	  @if(b.hasPets) {
+	  <span class="bowl-checkbox">&#9989; has pets</span>
+	  }
+	  <span class="bowl-checkbox">@if(b.currentSponsorId.isDefined) { &#9989;} else { &#10060; } assigned sponsor @if(b.currentSponsorId.isDefined) {- @b.currentSponsorId }</span>
+	  <span class="bowl-checkbox">&#10060; sponsor box-drop date</span>
+	  <span class="bowl-checkbox">@if(b.isMoved) { &#9989; } else { &#10060; } has box (complete)</span>
+	  @defining(b._id.getTimestamp().toLong*1000) { timestamp =>
+	  	<span class="date" id="date-added"><span>@("%te".format(timestamp))</span>@("%te".format(timestamp)) @("%tb".format(timestamp)) @("%tY".format(timestamp))</span>
+	  }
+	  <a id="remove-bowl-entry" class="delete-button">remove</a>
+	  <a id="edit-bowl-entry" class="edit-button">edit</a>
+	</p>
+	}
+	
+	</div>
+</div> 
+
+</main>
+}
+

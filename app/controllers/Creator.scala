@@ -10,56 +10,62 @@ import controllers.Authentication.Authenticated
 import controllers.Authentication.loginForm
 
 import models.Location.GPS
-import models.Homebound
-import models.HomeboundOps
-import models.Sponsor
-import models.SponsorOps
+import models.Bowl
+import models.BowlOps
+import models.Nood
+import models.NoodOps
 
 import models.Secure
 import models.Secure.Tools
 
 object Creator extends Controller with Tools {
   
-  def sponsor = Authenticated { Action { implicit request =>
-      Ok(views.html.sponsorform(SponsorOps.creatorForm))
-  }}
+ // def nood = Authenticated { Action { implicit request =>
+ //     Ok(views.html.noodform(NoodOps.creatorForm))
+ // }}
   
   /*
   *   Ok(views.html.homeboundform(HomeboundOps.allReverse()))
   *   Ok(views.html.homeboundform(HomeboundOps.recallByUser(toolbar.user.getOrElse("")))) //bad!
   */
   
-  def homebound = Authenticated { Action { implicit request =>
+  def bowl = Authenticated { Action { implicit request =>
     if (Secure.isAdmin(request) || toolbar.canWrite) { 
-      Ok(views.html.homeboundform(HomeboundOps.allReverse()))
-    } else Redirect("/go/")
+      Ok(views.html.bowlform(BowlOps.allReverse()))
+    } else Redirect("/home/")
   }}
   
-  def addHomebound =  Action { implicit request =>
-    HomeboundOps.creatorForm.bindFromRequest.fold(
+  def nood = Authenticated { Action { implicit request =>
+ //   if (Secure.isAdmin(request) /*|| toolbar.canWrite*/) { 
+      Ok(views.html.noodleform(NoodOps.allReverse()))
+ //   } else Redirect("/home/")
+  }}
+  
+  def addBowl =  Action { implicit request =>
+    BowlOps.creatorForm.bindFromRequest.fold(
       hasErrors = { form =>
         BadRequest(views.html.index())
       },
       
       success = { data =>    
         if (Secure.isAuthorized(request) && (toolbar.canWrite || Secure.isAdmin(request))) { 
-          Logger.debug("Adding Homebound " + data)
-      	  HomeboundOps.add(data)
-      	  Redirect(routes.Creator.homebound)
+          Logger.debug("Adding Bowl " + data)
+      	  BowlOps.add(data)
+      	  Redirect(routes.Creator.bowl)
       	} else Ok("not admin")
     })
   }
 
-  def addSponsor =  Action { implicit request =>
-    SponsorOps.creatorForm.bindFromRequest.fold(
+  def addNood =  Action { implicit request =>
+    NoodOps.creatorForm.bindFromRequest.fold(
       hasErrors = { form =>
         BadRequest(views.html.index())
       },
       
       success = { data =>    
         if (Secure.isAuthorized(request)) { 
-      	  SponsorOps.add(data)
-      	  Redirect(routes.Dashboard.index)
+      	  NoodOps.add(data)
+      	  Redirect(routes.Creator.nood)
       	} else Ok("not admin")
     })
   }

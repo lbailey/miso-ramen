@@ -23,21 +23,21 @@ import com.novus.salat.global._
 import com.novus.salat.annotations._
 
 import com.mongodb.casbah.commons.Imports._
-import com.mongodb.casbah.MongoConnection
+import com.mongodb.casbah.{MongoConnection, MongoClient, MongoClientURI, WriteConcern}
 
-import com.novus.salat.Context
+//import com.novus.salat.Context
 
 
 import mongoContext._
-import models.Sponsor
-import models.SponsorOps._
+import models.Nood
+import models.NoodOps._
 import org.bson.types.ObjectId
 
 
 object Secure {
 
   case class Login(username: String, password: String, email: Option[String] = None, priv: Option[Int] = None )
-  case class Toolbar(menu: Seq[Link], user: Option[String], profile: Option[Sponsor], authorized: Boolean, canWrite: Boolean = false, canMod: Boolean = false, isAdmin: Boolean)
+  case class Toolbar(menu: Seq[Link], user: Option[String], currentBowl: Option[Bowl], authorized: Boolean, canWrite: Boolean = false, canMod: Boolean = false, isAdmin: Boolean)
   case class Link(url: String, name: String)
   
   val RedirectUrlRE = new Regex("""[^/login/]""")
@@ -57,8 +57,9 @@ object Secure {
 	  }	 
 	  val write:Boolean = canWrite(someUser.getOrElse(""))
       val mod:Boolean = canAdmin(someUser.getOrElse("")) 
-	  var someSponsor:Option[Sponsor] = SponsorOps.recallByLoginString(someUser.getOrElse("none"))	  
-      Toolbar(menu, someUser, someSponsor, isLogged, write, mod, admin)
+	  //var someNood:Option[Nood] = NoodOps.recallByLoginString(someUser.getOrElse("none"))	  
+	  var someBowl:Option[Bowl] = getCurrentBowl(someUser.getOrElse(""))
+      Toolbar(menu, someUser, someBowl, isLogged, write, mod, admin)
     }
   }
 
@@ -142,6 +143,15 @@ object Secure {
     Vault.findUserByName(username)
   }
   
+  def getCurrentBowl(username: String): Option[Bowl] = {
+  	val user:Option[User] = getLogin(username)
+  	var bowl:Option[Bowl] = None
+    if (user.isDefined) {
+       	bowl = getLogin(username).get.currentBowl
+    }
+  	bowl //return
+  }
+  
   def canWrite(username:String): Boolean = {
     val user:Option[User] = getLogin(username)
     if (user.isDefined) {
@@ -193,15 +203,13 @@ object Secure {
 
 
 
-case class User(_id: ObjectId = new ObjectId, u: String, p: String, e: String, a: Int = 1)
+case class User(_id: ObjectId = new ObjectId, u: String, p: String, e: String, a: Int = 1, 
+											  noods: List[Nood] = List.empty, bowls: List[Bowl] = List.empty, 
+											  currentBowl: Option[Bowl] = None, noodRankings: Map[String, Int] = Map.empty)
 
-object UserDAO extends SalatDAO[User, ObjectId](collection = MongoConnection()(
-    current.configuration.getString("mongodb.default.db")
-      .getOrElse(throw new PlayException("Configuration error",
-      "Could not find mongodb.default.db in settings"))
-  )("vault"))
+object UserDAO extends SalatDAO[User, ObjectId](collection = MongoClient(MongoClientURI("mongodb://localhost:27017/"))("ramendb")("vault"))
   
-  
+
 object Vault extends Object {
 
   def all(): List[User] = {
@@ -211,7 +219,8 @@ object Vault extends Object {
 
   def writeNew(sl: Secure.Login) {
 	Logger.debug("adding user: " + sl.username)
-  	val _id = UserDAO.insert(User(u = sl.username, p = Secure.encodePass(sl.password), e = sl.email.getOrElse("none"), a = 1))
+	var nu:User = new User(u = sl.username, p = Secure.encodePass(sl.password), e = sl.email.getOrElse("none"), a = 1)
+  	val _id = UserDAO.insert(nu)
   }
   
   def remove(sl: Secure.Login) {
@@ -225,6 +234,7 @@ object Vault extends Object {
   }
   
   def recall(sl: Secure.Login): Option[User] = {
+    Logger.debug("checking stuff: " + UserDAO.collection)
   	val find = UserDAO.findOne(MongoDBObject("u" -> sl.username))
   	find //return
   }
@@ -240,6 +250,15 @@ object Vault extends Object {
       val id = secureLogin.get._id
       UserDAO.update(q = MongoDBObject("_id" -> id), o = MongoDBObject("$set" -> MongoDBObject("a" -> perm)), upsert = false, multi = false)
       Logger.debug("updated perms of " + username + " to " + perm)
+    }   
+  }
+  
+  def updateBowl(username: String, newBowl: Bowl) {
+    val user = findUserByName(username)
+    if (user.isDefined) {
+      val id = user.get._id
+      UserDAO.update(q = MongoDBObject("_id" -> id), o = MongoDBObject("$set" -> MongoDBObject("currentBowl" -> newBowl)), upsert = false, multi = false)
+      Logger.debug("updated current bowl of " + username + " to " + newBowl)
     }   
   }
   
