@@ -45,8 +45,8 @@ case class Bowl(_id: ObjectId = new ObjectId,
 					phoneNumber: Option[String] = None, 
 					currentSponsorId: Option[String] = None) {} //User ID
 
-object BowlDAO extends SalatDAO[Bowl, ObjectId](collection = MongoClient(MongoClientURI("mongodb://localhost:27017/"))("ramendb")("bowls"))
-  
+//object BowlDAO extends SalatDAO[Bowl, ObjectId](collection = MongoClient(MongoClientURI("mongodb://localhost:27017/"))("ramendb")("bowls"))
+object BowlDAO extends SalatDAO[Bowl, ObjectId](collection = MongoClient(MongoClientURI("mongodb://ramenadmin:admin@ds161950.mlab.com:61950/"))("ramendb")("bowls"))
   
 object BowlOps extends Object {
 

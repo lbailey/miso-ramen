@@ -63,8 +63,8 @@ case class Nood(_id: ObjectId = new ObjectId,
 					ratedBy: List[String],	//userIds
 					containingBowls: List[Bowl]) {}
 
-
-object NoodDAO extends SalatDAO[Nood, ObjectId](collection = MongoClient(MongoClientURI("mongodb://localhost:27017/"))("ramendb")("noods"))  
+object NoodDAO extends SalatDAO[Nood, ObjectId](collection = MongoClient(MongoClientURI("mongodb://ramenadmin:admin@ds161950.mlab.com:61950/"))("ramendb")("noods"))  
+//object NoodDAO extends SalatDAO[Nood, ObjectId](collection = MongoClient(MongoClientURI("mongodb://localhost:27017/"))("ramendb")("noods"))  
   
 object NoodOps extends Object {
 
